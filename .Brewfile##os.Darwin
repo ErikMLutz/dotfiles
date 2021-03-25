@@ -1,0 +1,17 @@
+brew "tmux"
+brew "neovim"
+
+# zsh and extensions
+brew "zsh"
+brew "zsh-completion"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+
+# utilities
+brew "fd"
+brew "fzf"
+brew "bat"
+brew "tree"
+brew "direnv"
+brew "ripgrep"
+brew "git-flow"

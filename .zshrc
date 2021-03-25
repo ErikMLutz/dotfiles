@@ -8,7 +8,7 @@
 export EDITOR=nvim
 
 # less options
-export LESS="-aiqrR --mouse"
+export LESS="-aiqrR"
 
 # --------------------------------------------------------------------------------------------------
 #                                           miscellaneous 

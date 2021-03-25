@@ -15,4 +15,19 @@ if [ "$system_type" = "Darwin" ]; then
     brew bundle --global
   fi
 
+  if [ -d "$HOME/.config/iterm2" ]; then
+    echo "Setting iTerm preference folder"
+    defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.config/iterm2"
+  fi
+
+fi
+
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "Installing Oh-My-Zsh"
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+if [ ! -d "$HOME/.oh-my-zsh/custom/themes/powerlevel10k" ]; then
+  echo "Installing Powerlevel10k"
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/custom/themes/powerlevel10k
 fi

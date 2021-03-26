@@ -14,11 +14,18 @@ fi
 # set neovim as default editor
 export EDITOR=nvim
 
+# add DDev commands to path
+export PATH=~/.ddev/bin:$PATH
+
 # use bat for syntax highlighted man pages
 export MANPAGER="sh -c 'col -bx | bat --language=man'"
 
 # less options
 export LESS="-aiqrR"
+
+# add DDev function completions, deduplicate path
+export fpath=(~/.ddev/completion $fpath)
+typeset -aU fpath
 
 # --------------------------------------------------------------------------------------------------
 #                                      oh-my-zsh configuration
@@ -41,10 +48,50 @@ plugins=(
 )
 
 # source oh-my-zsh once to avoid slow downs
-source $ZSH/oh-my-zsh.sh
+[ -z $ZSHRC_SOURCED ] && source $ZSH/oh-my-zsh.sh
 
-# apply p10k theme
-source $HOME/.p10k.zsh
+# --------------------------------------------------------------------------------------------------
+#                                          zsh configuration
+# --------------------------------------------------------------------------------------------------
+
+# configure zsh-autosuggestions
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=$COLOR_21,bg=$BACKGROUND_COLOR"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(expand-or-complete $ZSH_AUTOSUGGEST_CLEAR_WIDGETS)
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+# configure zsh-syntax-highlighting to show brackets
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+# enable short option stacking with docker autosuggestions (e.g. autocomplete after '-it')
+zstyle ":completion:*:*:docker:*" option-stacking yes
+zstyle ":completion:*:*:docker-*:*" option-stacking yes
+
+# source autosuggestions and syntax highlighting
+[ -z $ZSHRC_SOURCED ] && source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -z $ZSHRC_SOURCED ] && source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# source function to toggle per directory history using ^g
+source $ZSH/plugins/per-directory-history/per-directory-history.zsh
+
+# stop pasted text from being highlighted
+zle_highlight=("paste:none")
+
+# disable autosuggestions while pasting, this greatly speeds up how fast pasted
+# text can be inserted in the line. This also fixes an issue where annoying and wrong
+# autosuggestsion will be displayed after pasting in text
+paste_init() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+}
+
+paste_finish() {
+  zle -N self-insert $OLD_SELF_INSERT
+  unset OLD_SELF_INSERT
+}
+zstyle ":bracketed-paste-magic" paste-init paste_init
+zstyle ":bracketed-paste-magic" paste-finish paste_finish
 
 # --------------------------------------------------------------------------------------------------
 #                                              DDev
@@ -52,9 +99,6 @@ source $HOME/.p10k.zsh
 
 # source internal ddev utility and extra utilites
 source ~/.ddev/source/ddev
-
-# add custom tools to PATH
-export PATH=$HOME/.ddev/bin:$PATH
 
 # run ddev initialization only once, NB this needs to be run prior to anything that requires
 # DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
@@ -76,6 +120,12 @@ eval "$(direnv hook zsh)"
 
 # set Neovim to listen to /tmp/nvim so that commands can be sent to all Neovim instances
 alias nvim="NVIM_LISTEN_ADDRESS=/tmp/nvim nvim"
+
+# apply p10k theme
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# don't share history between terminals
+unsetopt sharehistory
 
 # signal to skip certain commands on subsequent runs
 export ZSHRC_SOURCED="TRUE"

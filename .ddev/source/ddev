@@ -1,0 +1,263 @@
+#!/bin/zsh
+#
+# DDev utility compiling various custom dev tools
+#
+
+_ddev_theme_print () {
+  # run _ddev_theme_print_current in a subshell after setting environment variables, avoids
+  # affecting current theme
+  zsh -c \
+	"
+	source ~/.ddev/source/ddev
+	export SCRIPT_PATH=~/.ddev/source/_ddev_apply_colors;
+	source ~/.ddev/themes/$1.sh;
+	unset SCRIPT_PATH;
+	_ddev_theme_print_current
+	"
+}
+
+_ddev_theme_print_current () {
+  # prints theme currently defined in environment variables
+  set_theme_fg_bg () {
+	print -Pn "%K{$BACKGROUND_COLOR}%F{$FOREGROUND_COLOR}"
+  }
+
+  print_in_box () {
+	[ -z $2 ] && length=${#1} || length=$2
+	local padding=$((cols - 3 - length))
+	print -Pn "│ $1"
+	set_theme_fg_bg
+	for ((i=1; i<=padding; i++)); do
+	  print -n " "
+	done
+	print -n "│"
+	print
+  }
+
+  cols="$(((`tput cols` / 2) - 4))"
+  lines="$((`tput lines` - 2))"
+
+  set_theme_fg_bg
+  # print top of box
+  for ((i=1; i<=cols; i++)); do
+	case "$i" in
+	  1 ) print -n "┌" ;;
+	  "$cols" ) print -n "┐" ;;
+	  * ) print -n "─" ;;
+	esac
+  done
+  echo
+
+  print_in_box "$PROFILE_NAME"
+  print_in_box
+
+  colors_box=""
+  for i in {2..7}; do
+	color_number=$(printf '%02d' $i)
+	colors_box="$colors_box%K{${(P)$(echo COLOR_$color_number)}}       "
+  done
+  print_in_box "$colors_box" 42
+  print_in_box "$colors_box" 42
+  print_in_box
+
+  colors_box=""
+  for i in {17..22}; do
+	color_number=$(printf '%02d' $i)
+	colors_box="$colors_box%K{${(P)$(echo COLOR_$color_number)}}       "
+  done
+  print_in_box "$colors_box" 42
+  print_in_box "$colors_box" 42
+  print_in_box
+
+  for i in {1..22}; do
+	color_number=$(printf '%02d' $i)
+	color_example="%K{${(P)$(echo COLOR_$color_number)}}     $(set_theme_fg_bg) COLOR_$color_number: $(_ddev_theme_clean_color ${(P)$(echo COLOR_$color_number)})"
+	print_in_box "$color_example" 23
+  done
+  print_in_box
+
+  bottom_padding=$(( lines - 33 ))
+  for i in $(eval echo "{1..$bottom_padding}"); do
+	print_in_box
+  done
+
+  # print bottom of box
+  for ((i=1; i<=cols; i++)); do
+	case "$i" in
+	  1 ) print -n "└" ;;
+	  "$cols" ) print -n "┘" ;;
+	  * ) print -n "─" ;;
+	esac
+  done
+  print
+}
+
+_ddev_theme_clean_color () {
+  # performs any transformations necessary to make color compatible with DDev
+  echo $( echo $1 | tr '[:upper:]' '[:lower:]' | sed 's/default/terminal/g' )
+}
+
+ddev () {
+  ddev_usage () {
+	echo "Usage: ddev [-h] [--help] subcommand [ subcommand opts ]"
+	echo "  ddev                        Start a DDev session in the current directory."
+	echo ""
+	echo "Options:"
+	echo "  -h, --help                  Display this help message."
+	echo "Subcommands:"
+	echo "  init                        Initialized internal DDev environment."
+	echo "  theme                       Configure color scheme."
+  }
+
+  ddev_init () {
+	# if compatible theme is set, very first session still has tmux specific colors
+	# set, so we change them back to a p10k compatible form
+
+	eval $(tmux show-environment -gs BACKGROUND_COLOR | sed 's/terminal/default/g')
+	eval $(tmux show-environment -gs FOREGROUND_COLOR | sed 's/terminal/default/g')
+	eval $(tmux show-environment -gs CURSOR_COLOR | sed 's/terminal/default/g')
+
+	# window colors aren't being set properly on very first session without this
+	tmux source ~/.tmux.conf
+  }
+
+  ddev_theme () {
+	ddev_theme_usage () {
+	  echo "Usage: ddev theme [-h | --help] subcommand"
+	  echo "  ddev theme                           Open theme selection interface."
+	  echo "Options:"
+	  echo "  -h, --help                           Display this help message."
+	  echo "Subcommands:"
+	  echo "  compatible                           Set a theme that will match your terminal's colors."
+	  echo "  sync                                 Sync current panes theme with global theme."
+	}
+
+	ddev_theme_apply () {
+	  for i in {01..22}; do
+		# grab color and force lowercase, necessary for tmux.conf colors
+		tmux set-environment -g COLOR_$i "$(_ddev_theme_clean_color ${(P)$(echo COLOR_$i)})"
+	  done
+	  tmux set-environment -g BACKGROUND_COLOR "$(_ddev_theme_clean_color $BACKGROUND_COLOR)"
+	  tmux set-environment -g FOREGROUND_COLOR "$(_ddev_theme_clean_color $FOREGROUND_COLOR)"
+	  tmux set-environment -g CURSOR_COLOR "$(_ddev_theme_clean_color $CURSOR_COLOR)"
+	  tmux set-environment -g PROFILE_NAME "$PROFILE_NAME"
+
+	  tmux source ~/.tmux.conf
+	  source ~/.zshrc
+	  # python3 ~/.ddev/misc/sync_neovim_theme.py
+	}
+
+	if [ $# -eq 0 ]; then
+	  # promt user to select a theme
+	  local THEME=$(\
+		ls $HOME/.ddev/themes | \
+		grep -v 'README.md\|_base.sh' | \
+		sed 's/\.sh//g' | \
+		fzf --preview 'source ~/.ddev/source/ddev; _ddev_theme_print {}' \
+	  )
+
+	  [ -z "$THEME" ] && return 0
+
+	  # override default 'apply-colors' script with empty script
+	  export SCRIPT_PATH=$HOME/.ddev/source/_ddev_apply_colors
+	  source $HOME/.ddev/themes/$THEME.sh
+	  unset SCRIPT_PATH
+
+	  ddev_theme_apply
+	  return $?
+	fi
+
+	if [ $# -gt 1 ]; then
+	  echo "ddev theme: unknown theme '$@'." 1>&2
+	  ddev_theme_usage; return 1
+	fi
+
+	case "$1" in
+	  -h | --help )
+		ddev_theme_usage
+		return $?
+		;;
+	  compatible )
+		# 16-color theme compatible with local terminal color schemes
+		export COLOR_01="0"
+		export COLOR_02="1"
+		export COLOR_03="2"
+		export COLOR_04="3"
+		export COLOR_05="4"
+		export COLOR_06="5"
+		export COLOR_07="6"
+		export COLOR_08="7"
+
+		export COLOR_09="8"
+		export COLOR_10="9"
+		export COLOR_11="10"
+		export COLOR_12="11"
+		export COLOR_13="12"
+		export COLOR_14="13"
+		export COLOR_15="14"
+		export COLOR_16="15"
+
+		export COLOR_17="17"
+		export COLOR_18="18"
+		export COLOR_19="19"
+		export COLOR_20="20"
+		export COLOR_21="21"
+		export COLOR_22="22"
+
+		export BACKGROUND_COLOR="default"
+		export FOREGROUND_COLOR="default"
+		export CURSOR_COLOR="default"
+		export PROFILE_NAME="Compatible"
+
+		ddev_theme_apply
+		return $?
+		;;
+	  sync )
+		ddev_theme_sync
+		return $?
+		;;
+	  * )
+		[ ! -f $HOME/.ddev/themes/$1.sh ] && echo "ddev theme: unknown theme '$1'." 1>&2 && return 1
+		local THEME=$1
+
+		export SCRIPT_PATH=$HOME/.ddev/source/_ddev_apply_colors
+		source $HOME/.ddev/themes/$THEME.sh
+		unset SCRIPT_PATH
+
+		ddev_theme_apply
+		return $?
+		;;
+	esac
+  }
+
+  ddev_theme_sync () {
+	# Syncs local pane theme with tmux global theme. 'ddev theme <theme>' only
+	# sets theme for tmux and the pane it was run in
+
+	# skip if already synced
+	[ "PROFILE_NAME=$PROFILE_NAME" = "$(tmux show-environment -g PROFILE_NAME)" ] && return 0
+
+	for i in {01..22}; do
+	  eval $(tmux show-environment -g COLOR_$i)
+	done
+	eval $(tmux show-environment -gs BACKGROUND_COLOR | sed 's/terminal/default/g')
+	eval $(tmux show-environment -gs FOREGROUND_COLOR | sed 's/terminal/default/g')
+	eval $(tmux show-environment -gs CURSOR_COLOR | sed 's/terminal/default/g')
+	eval $(tmux show-environment -gs PROFILE_NAME)
+
+	source ~/.zshrc
+	tmux source ~/.tmux.conf
+  }
+
+  if [ $# -eq 0 ]; then
+	ddev_usage
+	return 0
+  fi
+
+  case "$1" in
+	-h | --help ) ddev_usage; return $? ;;
+	init ) shift; ddev_init $@; return $? ;;
+	theme ) shift; ddev_theme $@; return $? ;;
+	* ) echo "ddev: unrecognized subcommand: $1" 1>&2; return 1 ;;
+  esac
+}

@@ -209,16 +209,16 @@
 
   ##################################[ dir: current directory ]##################################
   # Current directory background color.
-  typeset -g POWERLEVEL9K_DIR_BACKGROUND=4
+  typeset -g POWERLEVEL9K_DIR_BACKGROUND=$COLOR_05
   # Default current directory foreground color.
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND=254
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=${BACKGROUND_COLOR/default/0}
   # If directory is too long, shorten some of its segments to the shortest possible unique
   # prefix. The shortened directory can be tab-completed to the original.
   typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
   # Replace removed segment suffixes with this symbol.
   typeset -g POWERLEVEL9K_SHORTEN_DELIMITER=
   # Color of the shortened directory segments.
-  typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=250
+  typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=${BACKGROUND_COLOR/default/0}
   # Color of the anchor directory segments. Anchor segments are never shortened. The first
   # segment is always an anchor.
   typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=255
@@ -348,11 +348,11 @@
 
   #####################################[ vcs: git status ]######################################
   # Version control system colors.
-  typeset -g POWERLEVEL9K_VCS_CLEAN_BACKGROUND=2
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_BACKGROUND=3
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND=2
-  typeset -g POWERLEVEL9K_VCS_CONFLICTED_BACKGROUND=3
-  typeset -g POWERLEVEL9K_VCS_LOADING_BACKGROUND=8
+  typeset -g POWERLEVEL9K_VCS_CLEAN_BACKGROUND=$COLOR_03
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_BACKGROUND=$COLOR_04
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND=$COLOR_11
+  typeset -g POWERLEVEL9K_VCS_CONFLICTED_BACKGROUND=$COLOR_02
+  typeset -g POWERLEVEL9K_VCS_LOADING_BACKGROUND=$COLOR_09
 
   # Branch icon. Set this parameter to '\uf126 ' for the popular Powerline branch icon.
   typeset -g POWERLEVEL9K_VCS_BRANCH_ICON='\uf126 '
@@ -380,11 +380,11 @@
     fi
 
     # Styling for different parts of Git status.
-    local       meta='%7F' # white foreground
-    local      clean='%0F' # black foreground
-    local   modified='%0F' # black foreground
-    local  untracked='%0F' # black foreground
-    local conflicted='%1F' # red foreground
+    local       meta='%F{'$COLOR_07'}' # white foreground
+    local      clean='%F{'$COLOR_01'}' # black foreground
+    local   modified='%F{'$COLOR_01'}' # black foreground
+    local  untracked='%F{'$COLOR_01'}' # black foreground
+    local conflicted='%F{'$COLOR_02'}' # red foreground
 
     local res
 

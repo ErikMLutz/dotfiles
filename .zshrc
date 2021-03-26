@@ -44,7 +44,27 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 # apply p10k theme
-source ~/.p10k.zsh
+source $HOME/.p10k.zsh
+
+# --------------------------------------------------------------------------------------------------
+#                                              DDev
+# --------------------------------------------------------------------------------------------------
+
+# source internal ddev utility and extra utilites
+source ~/.ddev/source/ddev
+
+# add custom tools to PATH
+export PATH=$HOME/.ddev/bin:$PATH
+
+# run ddev initialization only once, NB this needs to be run prior to anything that requires
+# DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
+[ -z $ZSHRC_SOURCED ] && ddev init
+
+# establish precmd function
+precmd () {
+  # sync theme to account for changes from other panes
+  ddev theme sync
+}
 
 
 # --------------------------------------------------------------------------------------------------
@@ -56,3 +76,6 @@ eval "$(direnv hook zsh)"
 
 # set Neovim to listen to /tmp/nvim so that commands can be sent to all Neovim instances
 alias nvim="NVIM_LISTEN_ADDRESS=/tmp/nvim nvim"
+
+# signal to skip certain commands on subsequent runs
+export ZSHRC_SOURCED="TRUE"

@@ -49,3 +49,8 @@ if [ ! -d "$HOME/.ddev/themes" ]; then
   for theme in $HOME/.ddev/themes/*; do _ddev_convert_theme_file $theme; done
   rm $HOME/.ddev/themes/base16-*
 fi
+
+if [ ! -f "$HOME/.ddev/source/z.sh" ]; then
+  echo "Installing Z"
+  curl --output $HOME/.ddev/source/z.sh https://raw.githubusercontent.com/rupa/z/master/z.sh
+fi

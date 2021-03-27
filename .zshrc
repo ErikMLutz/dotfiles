@@ -134,6 +134,9 @@ export FZF_DEFAULT_COMMAND='rg --files --hidden'
 #                                           miscellaneous 
 # --------------------------------------------------------------------------------------------------
 
+# source z functions
+[[ -r "$HOME/.ddev/source/z.sh" ]] && source $HOME/.ddev/source/z.sh
+
 # hook direnv into shell
 eval "$(direnv hook zsh)"
 

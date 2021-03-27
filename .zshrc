@@ -99,6 +99,7 @@ zstyle ":bracketed-paste-magic" paste-finish paste_finish
 
 # source internal ddev utility and extra utilites
 source ~/.ddev/source/ddev
+source ~/.ddev/source/fzf-extensions
 
 # run ddev initialization only once, NB this needs to be run prior to anything that requires
 # DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
@@ -110,6 +111,24 @@ precmd () {
   ddev theme sync
 }
 
+# --------------------------------------------------------------------------------------------------
+#                                               fzf
+# --------------------------------------------------------------------------------------------------
+
+export FZF_DEFAULT_OPTS="\
+  --reverse --cycle \
+  --bind change:top \
+  --color bg:${BACKGROUND_COLOR/default/-1},bg+:$COLOR_01 \
+  --color fg:${FOREGROUND_COLOR/default/-1},fg+:$COLOR_08 \
+  --color hl:$COLOR_07,hl+:$COLOR_07 \
+  --color info:$COLOR_05,prompt:$COLOR_05 \
+  --color pointer:$COLOR_05,marker:$COLOR_05 \
+  --color header:$COLOR_16,spinner:$COLOR_07 \
+  --color border:${FOREGROUND_COLOR/default/-1} \
+  --color preview-fg:${FOREGROUND_COLOR/default/-1} \
+  --color preview-bg:${BACKGROUND_COLOR/default/-1} \
+  "
+export FZF_DEFAULT_COMMAND='rg --files --hidden'
 
 # --------------------------------------------------------------------------------------------------
 #                                           miscellaneous 

@@ -17,6 +17,7 @@ brew "tree"
 brew "direnv"
 brew "ripgrep"
 brew "git-flow"
+brew "gnu-getopt"
 
 # fonts
 cask "font-hack-nerd-font"

@@ -54,3 +54,8 @@ if [ ! -f "$HOME/.ddev/source/z.sh" ]; then
   echo "Installing Z"
   curl --output $HOME/.ddev/source/z.sh https://raw.githubusercontent.com/rupa/z/master/z.sh
 fi
+
+if command -v nvim >/dev/null 2>&1; then
+  echo "Bootstraping nvim"
+  nvim '+PlugUpdate' '+PlugClean!' '+PlugUpdate' '+qall'
+fi

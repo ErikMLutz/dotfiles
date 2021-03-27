@@ -144,7 +144,7 @@ ddev () {
 
 	  tmux source ~/.tmux.conf
 	  source ~/.zshrc
-	  # python3 ~/.ddev/misc/sync_neovim_theme.py
+	  python3 ~/.ddev/misc/sync_neovim_theme.py
 	}
 
 	if [ $# -eq 0 ]; then

@@ -1,18 +1,19 @@
 " VIM Configuration
 
 " General
-set mouse=a              " allow mouse controls for all modes
-set backspace=2          " allow backspacing over end of lines
-set number               " show line numbers
-set ignorecase           " case insensitive searches
-set smartcase            " case sensitive if upper case letters are included
-set lazyredraw           " redraw the screen less
-set splitbelow           " create horizontal splits below current window
-set splitright           " create vertical splits to the right of current window
-set undofile             " save undo history to file and persist across sessions
-set undodir=~/.vim/undo  " location of undo history file
-set smartindent          " smarter autoindent based on syntax
-let mapleader = ","      " use comma as leader key
+set mouse=a                " allow mouse controls for all modes
+set backspace=2            " allow backspacing over end of lines
+set number                 " show line numbers
+set ignorecase             " case insensitive searches
+set smartcase              " case sensitive if upper case letters are included
+set lazyredraw             " redraw the screen less
+set splitbelow             " create horizontal splits below current window
+set splitright             " create vertical splits to the right of current window
+set undofile               " save undo history to file and persist across sessions
+set undodir=~/.vim/undo    " location of undo history file
+set smartindent            " smarter autoindent based on syntax
+set clipboard=unnamedplus  " copy to system clipboard
+let mapleader = ","        " use comma as leader key
 
 " Install Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))  " auto install vim-plug

@@ -111,6 +111,10 @@ paste_finish() {
 zstyle ":bracketed-paste-magic" paste-init paste_init
 zstyle ":bracketed-paste-magic" paste-finish paste_finish
 
+# KEY BINDINGS
+bindkey "^[OA" up-line-or-history  # vi-mode defaults this to up-line-or-beginning-search
+bindkey "^[OB" down-line-or-history  # vi-mode defaults this to down-line-or-beginning-search
+
 # --------------------------------------------------------------------------------------------------
 #                                               fzf
 # --------------------------------------------------------------------------------------------------
@@ -145,9 +149,6 @@ alias nvim="NVIM_LISTEN_ADDRESS=/tmp/nvim nvim"
 
 # apply p10k theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# don't share history between terminals
-unsetopt sharehistory
 
 # signal to skip certain commands on subsequent runs
 export ZSHRC_SOURCED="TRUE"

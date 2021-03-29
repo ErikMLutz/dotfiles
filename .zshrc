@@ -28,6 +28,24 @@ export fpath=(~/.ddev/completion $fpath)
 typeset -aU fpath
 
 # --------------------------------------------------------------------------------------------------
+#                                              DDev
+# --------------------------------------------------------------------------------------------------
+
+# source internal ddev utility and extra utilites
+source ~/.ddev/source/ddev
+source ~/.ddev/source/fzf-extensions
+
+# run ddev initialization only once, NB this needs to be run prior to anything that requires
+# DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
+[ -z $ZSHRC_SOURCED ] && ddev init
+
+# establish precmd function
+precmd () {
+  # sync theme to account for changes from other panes
+  ddev theme sync
+}
+
+# --------------------------------------------------------------------------------------------------
 #                                      oh-my-zsh configuration
 # --------------------------------------------------------------------------------------------------
 
@@ -92,24 +110,6 @@ paste_finish() {
 }
 zstyle ":bracketed-paste-magic" paste-init paste_init
 zstyle ":bracketed-paste-magic" paste-finish paste_finish
-
-# --------------------------------------------------------------------------------------------------
-#                                              DDev
-# --------------------------------------------------------------------------------------------------
-
-# source internal ddev utility and extra utilites
-source ~/.ddev/source/ddev
-source ~/.ddev/source/fzf-extensions
-
-# run ddev initialization only once, NB this needs to be run prior to anything that requires
-# DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
-[ -z $ZSHRC_SOURCED ] && ddev init
-
-# establish precmd function
-precmd () {
-  # sync theme to account for changes from other panes
-  ddev theme sync
-}
 
 # --------------------------------------------------------------------------------------------------
 #                                               fzf

@@ -92,9 +92,17 @@ set background = "dark"  " dark mode
 set termguicolors        " use 24 bit colors
 syntax enable            " enable syntax highlighting
 
+function! SetGUIBackground()  " use tmux background if inside session, otherwise use theme background
+  if empty($TMUX)
+    execute expand("highlight Normal guibg=$BACKGROUND_COLOR")
+  else
+    highlight Normal guibg=none
+  endif
+endfunction
+
 augroup CustomColors
   autocmd!
-  autocmd ColorScheme * highlight Normal guibg=none  " sync background with TMUX window-active-style
+  autocmd ColorScheme * call SetGUIBackground()
 augroup END
 colorscheme base16-$PROFILE_NAME  " sync colorscheme with DDev theme
 

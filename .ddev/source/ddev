@@ -113,12 +113,24 @@ ddev () {
 	# if compatible theme is set, very first session still has tmux specific colors
 	# set, so we change them back to a p10k compatible form
 
-	eval $(tmux show-environment -gs BACKGROUND_COLOR | sed 's/terminal/default/g')
-	eval $(tmux show-environment -gs FOREGROUND_COLOR | sed 's/terminal/default/g')
-	eval $(tmux show-environment -gs CURSOR_COLOR | sed 's/terminal/default/g')
+	if [ ! -z "$TMUX" ]; then
+          eval $(tmux show-environment -gs BACKGROUND_COLOR | sed 's/terminal/default/g')
+          eval $(tmux show-environment -gs FOREGROUND_COLOR | sed 's/terminal/default/g')
+          eval $(tmux show-environment -gs CURSOR_COLOR | sed 's/terminal/default/g')
 
-	# window colors aren't being set properly on very first session without this
-	tmux source ~/.tmux.conf
+          # window colors aren't being set properly on very first session without this
+          tmux source ~/.tmux.conf
+        fi
+
+	# get local theme if it's set
+	[ -e ~/.ddev.conf ] || [ -L ~/.ddev.conf ] && source ~/.ddev.conf
+
+	if [ ! -z "$DDEV_THEME" ]; then
+	  DDEV_NO_SOURCE_ZSHRC=1 ddev_theme $DDEV_THEME
+	else
+	  # default to solarized-dark
+	  DDEV_NO_SOURCE_ZSHRC=1 ddev_theme solarized-dark
+	fi
   }
 
   ddev_theme () {
@@ -133,19 +145,51 @@ ddev () {
 	}
 
 	ddev_theme_apply () {
+          # set relevant shell/tmux variables, cleaning if necessary
 	  for i in {01..22}; do
-		# grab color and force lowercase, necessary for tmux.conf colors
-		tmux set-environment -g COLOR_$i "$(_ddev_theme_clean_color ${(P)$(echo COLOR_$i)})"
+            # grab color and force lowercase, necessary for tmux.conf colors
+            local color="$(_ddev_theme_clean_color ${(P)$(echo COLOR_$i)})"
+            if [ ! -z "$TMUX" ]; then
+              tmux set-environment -g COLOR_$i $color
+            else
+              export COLOR_$i=$color
+            fi
 	  done
-	  tmux set-environment -g BACKGROUND_COLOR "$(_ddev_theme_clean_color $BACKGROUND_COLOR)"
-	  tmux set-environment -g FOREGROUND_COLOR "$(_ddev_theme_clean_color $FOREGROUND_COLOR)"
-	  tmux set-environment -g CURSOR_COLOR "$(_ddev_theme_clean_color $CURSOR_COLOR)"
-	  tmux set-environment -g PROFILE_NAME "$PROFILE_NAME"
 
-	  tmux source ~/.tmux.conf
-	  source ~/.zshrc
+          if [ ! -z "$TMUX" ]; then
+            tmux set-environment -g BACKGROUND_COLOR "$(_ddev_theme_clean_color $BACKGROUND_COLOR)"
+            tmux set-environment -g FOREGROUND_COLOR "$(_ddev_theme_clean_color $FOREGROUND_COLOR)"
+            tmux set-environment -g CURSOR_COLOR "$(_ddev_theme_clean_color $CURSOR_COLOR)"
+            tmux set-environment -g PROFILE_NAME "$PROFILE_NAME"
+
+            tmux source ~/.tmux.conf
+          else
+            export BACKGROUND_COLOR="$(_ddev_theme_clean_color $BACKGROUND_COLOR)"
+            export FOREGROUND_COLOR="$(_ddev_theme_clean_color $FOREGROUND_COLOR)"
+            export CURSOR_COLOR="$(_ddev_theme_clean_color $CURSOR_COLOR)"
+            export PROFILE_NAME="$PROFILE_NAME"
+          fi
+
+	  [ -z "$DDEV_NO_SOURCE_ZSHRC" ] && source ~/.zshrc
 	  python3 ~/.ddev/misc/sync_neovim_theme.py
+
+          ddev_theme_save
 	}
+
+        ddev_theme_save () {
+          # store theme selection to ~/.ddev.conf so it can be reloaded in new shells
+
+          # make sure  ~/.ddev.conf exists
+          touch ~/.ddev.conf
+
+          if grep -wq DDEV_THEME ~/.ddev.conf; then
+            # replace existing theme
+            sed -i '' "s/DDEV_THEME=.*$/DDEV_THEME=$PROFILE_NAME/g" ~/.ddev.conf
+          else
+            # create config line
+            echo "DDEV_THEME=$PROFILE_NAME" >> ~/.ddev.conf
+          fi
+        }
 
 	if [ $# -eq 0 ]; then
 	  # promt user to select a theme
@@ -234,6 +278,9 @@ ddev () {
 	# Syncs local pane theme with tmux global theme. 'ddev theme <theme>' only
 	# sets theme for tmux and the pane it was run in
 
+        # skip if not in a tmux session
+        [ -z "$TMUX" ] && return 0
+
 	# skip if already synced
 	[ "PROFILE_NAME=$PROFILE_NAME" = "$(tmux show-environment -g PROFILE_NAME)" ] && return 0
 
@@ -245,7 +292,7 @@ ddev () {
 	eval $(tmux show-environment -gs CURSOR_COLOR | sed 's/terminal/default/g')
 	eval $(tmux show-environment -gs PROFILE_NAME)
 
-	source ~/.zshrc
+	[ -z "$DDEV_NO_SOURCE_ZSHRC" ] && source ~/.zshrc
 	tmux source ~/.tmux.conf
   }
 

@@ -29,6 +29,8 @@ Plug 'itchyny/lightline.vim'    " lightweight Powerline for Vim
 Plug 'tpope/vim-fugitive'       " Git integration
 Plug 'tpope/vim-eunuch'         " common Unix commands
 Plug 'tpope/vim-surround'       " interact with 'surroundings' like quotes or parentheses
+Plug 'tpope/vim-abolish'        " better abbreviation and substitution
+Plug 'tpope/vim-sleuth'         " automatically detect and set expandtab and shiftwidth
 Plug 'tpope/vim-repeat'         " add repeat (.) compatibility for many plugins
 Plug 'junegunn/fzf'             " fzf base functionality
 Plug 'junegunn/fzf.vim'         " additional fzf integrations with vim
@@ -107,7 +109,6 @@ augroup END
 colorscheme base16-$PROFILE_NAME  " sync colorscheme with DDev theme
 
 " Key Bindings
-
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab
 nnoremap <silent> <tab> gt|               " next tab
 nnoremap <silent> <s-tab> gT|             " previous tab

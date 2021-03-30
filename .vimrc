@@ -24,18 +24,19 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'chriskempson/base16-vim'  " library of colorschemes that match DDev shell themes
-Plug 'itchyny/lightline.vim'    " lightweight Powerline for Vim
-Plug 'tpope/vim-fugitive'       " Git integration
-Plug 'tpope/vim-eunuch'         " common Unix commands
-Plug 'tpope/vim-surround'       " interact with 'surroundings' like quotes or parentheses
-Plug 'tpope/vim-abolish'        " better abbreviation and substitution
-Plug 'tpope/vim-sleuth'         " automatically detect and set expandtab and shiftwidth
-Plug 'tpope/vim-repeat'         " add repeat (.) compatibility for many plugins
-Plug 'junegunn/fzf'             " fzf base functionality
-Plug 'junegunn/fzf.vim'         " additional fzf integrations with vim
-Plug 'preservim/nerdtree'       " file browser
-Plug 'preservim/nerdcommenter'  " quick comment commands
+Plug 'chriskempson/base16-vim'             " library of colorschemes that match DDev shell themes
+Plug 'itchyny/lightline.vim'               " lightweight Powerline for Vim
+Plug 'tpope/vim-fugitive'                  " Git integration
+Plug 'tpope/vim-eunuch'                    " common Unix commands
+Plug 'tpope/vim-surround'                  " interact with 'surroundings' like quotes or parentheses
+Plug 'tpope/vim-abolish'                   " better abbreviation and substitution
+Plug 'tpope/vim-sleuth'                    " automatically detect and set expandtab and shiftwidth
+Plug 'tpope/vim-repeat'                    " add repeat (.) compatibility for many plugins
+Plug 'junegunn/fzf'                        " fzf base functionality
+Plug 'junegunn/fzf.vim'                    " additional fzf integrations with vim
+Plug 'preservim/nerdtree'                  " file browser
+Plug 'preservim/nerdcommenter'             " quick comment commands
+Plug 'tmux-plugins/vim-tmux-focus-events'  " hook tmux focus events into FocusGained and FocusLost
 
 call plug#end()
 
@@ -94,17 +95,10 @@ set background = "dark"  " dark mode
 set termguicolors        " use 24 bit colors
 syntax enable            " enable syntax highlighting
 
-function! SetGUIBackground()  " use tmux background if inside session, otherwise use theme background
-  if empty($TMUX)
-    execute expand("highlight Normal guibg=$BACKGROUND_COLOR")
-  else
-    highlight Normal guibg=none
-  endif
-endfunction
-
-augroup CustomColors
+augroup CustomColors  " set background when tmux focus changes
   autocmd!
-  autocmd ColorScheme * call SetGUIBackground()
+  autocmd FocusGained * execute expand("highlight Normal guibg=$BACKGROUND_COLOR")
+  autocmd FocusLost * execute expand("highlight Normal guibg=$COLOR_19")
 augroup END
 colorscheme base16-$PROFILE_NAME  " sync colorscheme with DDev theme
 

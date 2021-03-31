@@ -11,9 +11,10 @@ set splitbelow             " create horizontal splits below current window
 set splitright             " create vertical splits to the right of current window
 set undofile               " save undo history to file and persist across sessions
 set undodir=~/.vim/undo    " location of undo history file
+set viewdir=~/.vim/view    " location of saved views
 set smartindent            " smarter autoindent based on syntax
 set clipboard=unnamedplus  " copy to system clipboard
-let mapleader = ","        " use comma as leader key
+let mapleader = ','        " use comma as leader key
 
 " Install Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))  " auto install vim-plug
@@ -34,6 +35,8 @@ Plug 'tpope/vim-sleuth'                    " automatically detect and set expand
 Plug 'tpope/vim-repeat'                    " add repeat (.) compatibility for many plugins
 Plug 'junegunn/fzf'                        " fzf base functionality
 Plug 'junegunn/fzf.vim'                    " additional fzf integrations with vim
+Plug 'junegunn/goyo.vim'                   " distraction free mode
+Plug 'junegunn/limelight.vim'              " hyperfocus text under cursor
 Plug 'preservim/nerdtree'                  " file browser
 Plug 'preservim/nerdcommenter'             " quick comment commands
 Plug 'tmux-plugins/vim-tmux-focus-events'  " hook tmux focus events into FocusGained and FocusLost
@@ -62,7 +65,7 @@ let g:lightline = {
 
 command! LightlineReload call LightlineReload()  " Reload lightline, for use with ddev sync
 function! LightlineReload()
-  execute 'source' globpath(&rtp, 'autoload/lightline/colorscheme/ddev.vim')
+  execute 'source' globpath(&rtp, 'autoload/lightline/colorscheme/'. g:lightline.colorscheme. '.vim')
   call lightline#init()
   call lightline#colorscheme()
   call lightline#update()
@@ -79,6 +82,10 @@ command! -bang -nargs=* Rg
 map ; :Files<CR>|       " use fzf to search file list, mirrors DDev's "f nvim" command
 map <leader>; :Rg<CR>|  " use fzf to search within files, mirrors DDev's "f" command
 
+" junegunn/goyo.vim
+autocmd! User GoyoEnter Limelight  " sync Limelight with Goyo
+autocmd! User GoyoLeave Limelight!
+
 " preservim/nerdtree
 let g:NERDTreeShowHidden = 1               " show hidden files
 let g:NERDTreeIgnore=['\.git$']            " hide .git directories
@@ -91,16 +98,65 @@ let g:NERDCommentEmptyLines = 1       " also comment empty lines
 let g:NERDTrimTrailingWhitespace = 1  " auto trim trailing whitespace on uncomment
 
 " Color Scheme
-set background = "dark"  " dark mode
+set background=dark      " dark mode
 set termguicolors        " use 24 bit colors
 syntax enable            " enable syntax highlighting
 
+function! FocusBackground()  " set normal background colors
+  let l:guibg = expand("$BACKGROUND_COLOR")
+  execute "highlight Normal guibg=". l:guibg
+  execute "highlight VertSplit guibg=". l:guibg
+  execute "highlight StatusLine guibg=". l:guibg
+  execute "highlight StatusLineNC guibg=". l:guibg
+  execute "highlight NonText guibg=". l:guibg
+  unlet l:guibg
+  if &laststatus == 2  " don't reload lighline if it's not visible
+    let g:lightline.colorscheme = 'ddev'
+    call LightlineReload()
+  endif
+endfunction
+
+function! UnfocusBackground()  " set a lighter background color
+  let l:guibg = expand("$COLOR_19")
+  execute "highlight Normal guibg=". l:guibg
+  execute "highlight VertSplit guibg=". l:guibg
+  execute "highlight StatusLine guibg=". l:guibg
+  execute "highlight StatusLineNC guibg=". l:guibg
+  execute "highlight NonText guibg=". l:guibg
+  unlet l:guibg
+  if &laststatus == 2  " don't reload lighline if it's not visible
+    let g:lightline.colorscheme = 'ddev_unfocused'
+    call LightlineReload()
+  endif
+endfunction
+
 augroup CustomColors  " set background when tmux focus changes
   autocmd!
-  autocmd FocusGained * execute expand("highlight Normal guibg=$BACKGROUND_COLOR")
-  autocmd FocusLost * execute expand("highlight Normal guibg=$COLOR_19")
+  autocmd FocusGained * call FocusBackground()
+  autocmd FocusLost * call UnfocusBackground()
 augroup END
 colorscheme base16-$PROFILE_NAME  " sync colorscheme with DDev theme
+
+" Journaling
+let g:journal_file = '~/.journal.md'
+function! ToggleJournal()  " quickly jump to and from journal
+  if expand('%:p') != expand(g:journal_file)  " open journal and set theme
+    tabnew
+    execute 'edit' g:journal_file
+    silent! loadview  " load stored view so we always return to the same place
+    Goyo
+  else
+    mkview  " store our view of the file so it can be restored
+    quit  " quit Goyo mode
+    silent write
+    quit  " quit original tab
+  endif
+endfunction
+
+nnoremap <silent> <leader>j :call ToggleJournal()<CR>|  " open and close journal
+
+" Markdown
+let g:markdown_fenced_languages = ['sh', 'python']
 
 " Key Bindings
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab

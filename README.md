@@ -56,3 +56,13 @@ Subcommands:
   nvim                        Open a file based on file name.
   tags                        Open a file based on ctags.
 ```
+
+### Vim Tools
+
+#### Quick Access Journal
+
+From anywhere in `nvim` you can press `<leader>j` to pull up a quick access journal. The journal is opened in a focused
+reading mode that leverages [junegunn/goyo.vim](https://github.com/junegunn/goyo.vim) and
+[junegunn/limelight.vim](https://github.com/junegunn/limelight.vim). The same keystroke will hide the journal and return
+you to the previous buffer you were working on. Each time you leave the journal its contents and view are saved so that
+you always return to the same state you left.

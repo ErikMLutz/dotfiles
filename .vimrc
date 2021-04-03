@@ -155,6 +155,54 @@ endfunction
 
 nnoremap <silent> <leader>j :call ToggleJournal()<CR>|  " open and close journal
 
+" Session Management
+
+function! MakeSession()  " explicitly write a session
+  let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
+  if (filewritable(b:sessiondir) != 2)
+    execute 'silent !mkdir -p ' . b:sessiondir
+    redraw!
+  endif
+  let b:sessionfile = b:sessiondir . '/session.vim'
+  execute 'mksession! ' . b:sessionfile
+endfunction
+
+function! DeleteSession()  " explicitly delete a session
+  let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
+  let b:sessionfile = b:sessiondir . '/session.vim'
+  if (filereadable(b:sessionfile))
+    execute 'silent !rm ' . b:sessionfile
+  endif
+endfunction
+
+function! UpdateSession()  " update a session, only if it exists
+  if argc() == 0  " don't save if nvim is called on a specific file
+    let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
+    let b:sessionfile = b:sessiondir . '/session.vim'
+    if (filereadable(b:sessionfile))
+      execute 'mksession! ' . b:sessionfile
+    endif
+  endif
+endfunction
+
+function! LoadSession()  " load a session, only if it exists
+  if argc() == 0  " don't load if nvim is called on a specific file
+    let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
+    let b:sessionfile = b:sessiondir . '/session.vim'
+    if (filereadable(b:sessionfile))
+      execute 'source ' b:sessionfile
+    endif
+  else
+    let b:sessionfile = ''
+    let b:sessiondir = ''
+  endif
+endfunction
+
+autocmd VimEnter * nested :call LoadSession()
+autocmd VimLeave * :call UpdateSession()
+nnoremap <leader>m :call MakeSession()<CR>
+nnoremap <leader>M :call DeleteSession()<CR>
+
 " Markdown
 let g:markdown_fenced_languages = ['sh', 'python']
 

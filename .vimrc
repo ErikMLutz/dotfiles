@@ -141,6 +141,7 @@ colorscheme base16-$PROFILE_NAME  " sync colorscheme with DDev theme
 let g:journal_file = '~/.journal.md'
 function! ToggleJournal()  " quickly jump to and from journal
   if expand('%:p') != expand(g:journal_file)  " open journal and set theme
+    let g:journal_last_tab = tabpagenr()
     tabnew
     execute 'edit' g:journal_file
     silent! loadview  " load stored view so we always return to the same place
@@ -150,6 +151,7 @@ function! ToggleJournal()  " quickly jump to and from journal
     quit  " quit Goyo mode
     silent write
     quit  " quit original tab
+    execute 'tabnext ' . g:journal_last_tab
   endif
 endfunction
 

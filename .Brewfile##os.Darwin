@@ -1,3 +1,5 @@
+tap "homebrew/cask-fonts"
+
 # zsh and extensions
 brew "zsh"
 brew "zsh-completion"

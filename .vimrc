@@ -145,7 +145,7 @@ function! ToggleJournal()  " quickly jump to and from journal
     tabnew
     execute 'edit' g:journal_file
     silent! loadview  " load stored view so we always return to the same place
-    Goyo
+    Goyo120
   else
     mkview  " store our view of the file so it can be restored
     quit  " quit Goyo mode
@@ -237,7 +237,7 @@ function! MarkdownFoldLevel()
       return "a1"
     endif
 
-    if line =~ '^\s*```$'  " decrease fold level at start of code blocks
+    if line =~ '^\s*```$'  " decrease fold level at end of code blocks
       return "s1"
     endif
 

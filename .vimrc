@@ -246,9 +246,11 @@ endfunction
 
 augroup markdown
   autocmd!
+  autocmd FileType markdown setlocal textwidth=120
   autocmd FileType markdown setlocal foldmethod=expr
   autocmd FileType markdown setlocal foldexpr=MarkdownFoldLevel()
   autocmd FileType markdown nnoremap <silent> - :call ToggleCheckbox()<CR>
+  autocmd FileType markdown nnoremap <silent> _ :keeppatterns call search('\[ \]')<CR>  " go to next incomplete task
 augroup END
 
 " Key Bindings

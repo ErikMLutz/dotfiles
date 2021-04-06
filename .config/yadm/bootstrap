@@ -12,6 +12,8 @@ if [ "$system_type" = "Darwin" ]; then
 
   if [ -f "$HOME/.Brewfile" ]; then
     echo "Updating homebrew bundle"
+    # create local Brewfile if it doesn't already exist
+    touch ~/.Brewfile.local
     brew bundle --global
   fi
 

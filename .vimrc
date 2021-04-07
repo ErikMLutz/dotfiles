@@ -150,7 +150,11 @@ function! ToggleJournal()  " quickly jump to and from journal
     mkview  " store our view of the file so it can be restored
     quit  " quit Goyo mode
     silent write
-    quit  " quit original tab
+    if get(g:, "journal_from_zsh", 0) == 1
+      quitall  " easy close back to shell
+    else
+      quit  " quit original tab
+    endif
     execute 'tabnext ' . g:journal_last_tab
   endif
 endfunction

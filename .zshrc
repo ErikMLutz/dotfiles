@@ -148,7 +148,7 @@ eval "$(direnv hook zsh)"
 alias nvim="NVIM_LISTEN_ADDRESS=/tmp/nvim nvim"
 
 # quick access to journal in Vim
-alias j="nvim +'call ToggleJournal()'"
+alias j="nvim +'let g:journal_from_zsh=1' +'call ToggleJournal()'"
 
 # apply p10k theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

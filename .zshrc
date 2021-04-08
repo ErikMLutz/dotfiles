@@ -99,6 +99,7 @@ zle_highlight=("paste:none")
 # disable autosuggestions while pasting, this greatly speeds up how fast pasted
 # text can be inserted in the line. This also fixes an issue where annoying and wrong
 # autosuggestsion will be displayed after pasting in text
+# https://github.com/zsh-users/zsh-autosuggestions/issues/351#issuecomment-483938570
 paste_init() {
   OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
   zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
@@ -110,6 +111,11 @@ paste_finish() {
 }
 zstyle ":bracketed-paste-magic" paste-init paste_init
 zstyle ":bracketed-paste-magic" paste-finish paste_finish
+
+# prevent autosuggestions after paste and execute
+# https://github.com/zsh-users/zsh-autosuggestions/issues/351#issuecomment-515415202
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(bracketed-paste accept-line)
+typeset -aU ZSH_AUTOSUGGEST_CLEAR_WIDGETS
 
 # KEY BINDINGS
 bindkey "^[OA" up-line-or-history  # vi-mode defaults this to up-line-or-beginning-search

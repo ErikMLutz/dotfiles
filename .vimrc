@@ -27,6 +27,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'chriskempson/base16-vim'             " library of colorschemes that match DDev shell themes
 Plug 'itchyny/lightline.vim'               " lightweight Powerline for Vim
+Plug 'tpope/vim-speeddating'               " increment and decrement support for datetimes
 Plug 'tpope/vim-fugitive'                  " Git integration
 Plug 'tpope/vim-eunuch'                    " common Unix commands
 Plug 'tpope/vim-surround'                  " interact with 'surroundings' like quotes or parentheses

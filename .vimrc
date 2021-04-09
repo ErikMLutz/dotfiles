@@ -14,6 +14,7 @@ set undodir=~/.vim/undo    " location of undo history file
 set viewdir=~/.vim/view    " location of saved views
 set smartindent            " smarter autoindent based on syntax
 set clipboard=unnamedplus  " copy to system clipboard
+set foldlevelstart=99      " always open files unfolded by default
 let mapleader = ','        " use comma as leader key
 
 " Install Plugins
@@ -29,9 +30,9 @@ Plug 'chriskempson/base16-vim'             " library of colorschemes that match 
 Plug 'itchyny/lightline.vim'               " lightweight Powerline for Vim
 Plug 'tpope/vim-speeddating'               " increment and decrement support for datetimes
 Plug 'tpope/vim-fugitive'                  " Git integration
-Plug 'tpope/vim-eunuch'                    " common Unix commands
 Plug 'tpope/vim-surround'                  " interact with 'surroundings' like quotes or parentheses
 Plug 'tpope/vim-abolish'                   " better abbreviation and substitution
+Plug 'tpope/vim-eunuch'                    " common Unix commands
 Plug 'tpope/vim-sleuth'                    " automatically detect and set expandtab and shiftwidth
 Plug 'tpope/vim-repeat'                    " add repeat (.) compatibility for many plugins
 Plug 'junegunn/fzf'                        " fzf base functionality

@@ -55,14 +55,15 @@ export ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
   wd
   git
+  git-flow
   docker
   docker-compose
-  git-flow
+  kubectl
   pip
-  per-directory-history
   python
   virtualenv
   vi-mode
+  per-directory-history
 )
 
 # source oh-my-zsh once to avoid slow downs

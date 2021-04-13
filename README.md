@@ -4,7 +4,7 @@
 
 ### Dependencies
 
-`yadm` is the main dependency for installing these dotfiles. You can install it directly to your $PATH with:
+`yadm` is the only dependency for installing these dotfiles. You can install it directly to your $PATH with:
 
 ```bash
 curl -fLo /usr/local/bin/yadm https://github.com/TheLocehiliosan/yadm/raw/master/yadm
@@ -14,19 +14,22 @@ chmod a+x /usr/local/bin/yadm
 ### Steps
 
 ```bash
-# clone this repository
+# clone this repository, accept prompt to run bootstrap script
 yadm clone https://github.com/ErikMLutz/dotfiles.git
-
-# symlink alternate files based on machine
-yadm alt
-
-# run installation script
-yadm bootstrap
 ```
 
 ## Features
 
 There are a lot of fun features in this repo!
+
+### Languages
+
+Development in the following languages is supported:
+
+#### Golang
+
+Go development is enabled with the [fatih/vim-go](https://github.com/fatih/vim-go) plugin for Vim. Run
+`:GoInstallBinaries` from Vim after bootstrapping to install additional requirements for Golang development.
 
 ### DDev
 
@@ -61,8 +64,11 @@ Subcommands:
 
 #### Quick Access Journal
 
-From anywhere in `nvim` you can press `<leader>j` to pull up a quick access journal. The journal is opened in a focused
+From anywhere in Vim you can press `<leader>j` to pull up a quick access journal. The journal is opened in a focused
 reading mode that leverages [junegunn/goyo.vim](https://github.com/junegunn/goyo.vim) and
 [junegunn/limelight.vim](https://github.com/junegunn/limelight.vim). The same keystroke will hide the journal and return
 you to the previous buffer you were working on. Each time you leave the journal its contents and view are saved so that
 you always return to the same state you left.
+
+Additionally, from any shell the alias `j` will open Vim to the journal. The `<leader>j` keystroke will exit Vim if the
+journal is opened with this method.

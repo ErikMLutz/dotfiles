@@ -172,7 +172,7 @@ ddev () {
       fi
 
       [ -z "$DDEV_NO_SOURCE_ZSHRC" ] && source ~/.zshrc
-      python3 ~/.ddev/misc/sync_neovim_theme.py
+      /usr/bin/python3 ~/.ddev/misc/sync_neovim_theme.py
 
       ddev_theme_save
     }

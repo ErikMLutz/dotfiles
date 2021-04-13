@@ -22,6 +22,10 @@ if [ "$system_type" = "Darwin" ]; then
     defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.config/iterm2"
   fi
 
+  if command -v /usr/bin/python3 >/dev/null 2>&1; then
+    echo "Installing required Python modules"
+    /usr/bin/python3 -m pip install --upgrade pip neovim
+  fi
 fi
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then

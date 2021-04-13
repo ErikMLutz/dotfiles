@@ -1,6 +1,10 @@
 " Markdown Filetype Settings
-let g:markdown_fenced_languages = ['sh', 'python']
-let g:markdown_checkbox_states = [ ' ', 'X']
+setlocal textwidth=120
+setlocal foldmethod=expr
+setlocal foldexpr=MarkdownFoldLevel()
+
+let g:markdown_fenced_languages = ['sh', 'python']  " languages to highlight in fenced blocks
+let g:markdown_checkbox_states = [ ' ', 'X']        " checkbox states in cycle order
 
 " toggle '* [ ]' checkboxes between g:markdown_checkbox_states
 function! ToggleCheckbox()  " inspired by 'jkramer/vim-checkbox'
@@ -40,8 +44,5 @@ function! MarkdownFoldLevel()
 endfunction
 
 " mappings
-setlocal textwidth=120
-setlocal foldmethod=expr
-setlocal foldexpr=MarkdownFoldLevel()
 nnoremap <buffer> <silent> - :call ToggleCheckbox()<CR>
 nnoremap <buffer> <silent> _ :keeppatterns call search('\[ \]')<CR>  " go to next incomplete task

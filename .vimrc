@@ -45,6 +45,7 @@ Plug 'junegunn/limelight.vim'              " hyperfocus text under cursor
 Plug 'preservim/nerdtree'                  " file browser
 Plug 'preservim/nerdcommenter'             " quick comment commands
 Plug 'tmux-plugins/vim-tmux-focus-events'  " hook tmux focus events into FocusGained and FocusLost
+Plug 'fatih/vim-go'                        " everything golang, run GoUpdateBinaries to initialize
 
 call plug#end()
 
@@ -67,6 +68,7 @@ let g:lightline = {
   \   'separator': { 'left': '', 'right': '' },
   \   'subseparator': { 'left': '', 'right': '' },
   \ }
+
 
 command! LightlineReload call LightlineReload()  " Reload lightline, for use with ddev sync
 function! LightlineReload()
@@ -167,7 +169,6 @@ endfunction
 nnoremap <silent> <leader>j :call ToggleJournal()<CR>|  " open and close journal
 
 " Session Management
-
 function! MakeSession()  " explicitly write a session
   let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
   if (filewritable(b:sessiondir) != 2)

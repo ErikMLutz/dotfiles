@@ -1,5 +1,8 @@
 " VIM Configuration
 
+" Filetype plugin files (<C-w>gf to open file under cursor in new tab)
+" ~/.config/nvim/after/ftplugin/markdown.vim
+
 " General
 set mouse=a                " allow mouse controls for all modes
 set backspace=2            " allow backspacing over end of lines
@@ -210,54 +213,6 @@ autocmd VimEnter * nested :call LoadSession()
 autocmd VimLeave * :call UpdateSession()
 nnoremap <leader>m :call MakeSession()<CR>
 nnoremap <leader>M :call DeleteSession()<CR>
-
-" Markdown
-let g:markdown_fenced_languages = ['sh', 'python']
-let g:markdown_checkbox_states = [ ' ', 'X']
-
-function! ToggleCheckbox()  " inspired by 'jkramer/vim-checkbox'
-  let line = getline('.')
-  if match(line, '\[.\]') != -1
-    let states = copy(g:markdown_checkbox_states)
-    call add(states, states[0])  " for easy cycling
-
-    for state in states
-      if match(line, '\[' . state . '\]') != -1
-        let next_state = states[index(states, state) + 1]
-        let line = substitute(line, '\[' . state . '\]', '[' . next_state . ']', '')
-        call setline('.', line)
-        break
-      endif
-    endfor
-  endif
-endfunction
-
-function! MarkdownFoldLevel()
-    let line = getline(v:lnum)
-
-    if line =~ '^#\+ .*$'  " define fold level by header level
-      return ">" . strlen(matchstr(line, '^#\+'))
-    endif
-
-    if line =~ '^\s*```\w\+.*$'  " increase fold level at start of code blocks
-      return "a1"
-    endif
-
-    if line =~ '^\s*```$'  " decrease fold level at end of code blocks
-      return "s1"
-    endif
-
-    return "="  " use fold level of previous line by default
-endfunction
-
-augroup markdown
-  autocmd!
-  autocmd FileType markdown setlocal textwidth=120
-  autocmd FileType markdown setlocal foldmethod=expr
-  autocmd FileType markdown setlocal foldexpr=MarkdownFoldLevel()
-  autocmd FileType markdown nnoremap <silent> - :call ToggleCheckbox()<CR>
-  autocmd FileType markdown nnoremap <silent> _ :keeppatterns call search('\[ \]')<CR>  " go to next incomplete task
-augroup END
 
 " Key Bindings
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab

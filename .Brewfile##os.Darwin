@@ -12,6 +12,7 @@ brew "neovim"
 
 # cli tools
 brew "jq"
+brew "yq"
 brew "fd"
 brew "fzf"
 brew "bat"

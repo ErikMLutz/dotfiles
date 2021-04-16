@@ -2,6 +2,7 @@
 
 " Filetype plugin files (<C-w>gf to open file under cursor in new tab)
 " ~/.config/nvim/after/ftplugin/markdown.vim
+" ~/.config/nvim/after/ftplugin/go.vim
 
 " General
 set mouse=a                " allow mouse controls for all modes
@@ -18,6 +19,8 @@ set viewdir=~/.vim/view    " location of saved views
 set smartindent            " smarter autoindent based on syntax
 set clipboard=unnamedplus  " copy to system clipboard
 set foldlevelstart=99      " always open files unfolded by default
+set textwidth=120          " wider files by default for better readability
+set colorcolumn=121        " highlight edge of file
 let mapleader = ','        " use comma as leader key
 
 " Install Plugins
@@ -215,7 +218,7 @@ autocmd VimLeave * :call UpdateSession()
 nnoremap <leader>m :call MakeSession()<CR>
 nnoremap <leader>M :call DeleteSession()<CR>
 
-" Key Bindings
+" General Key Bindings
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab
 nnoremap <silent> <tab> gt|               " next tab
 nnoremap <silent> <s-tab> gT|             " previous tab
@@ -233,6 +236,10 @@ nnoremap k gk|  " move down by visual line instead of literal line (i.e. wrapped
 
 nnoremap B ^|  " move to beginning of line
 nnoremap E $|  " move to end of line
+
+" this is required because <C-i> and <tab> are literally the same keystroke so the <tab> mapping above breaks the
+" default <C-i> 'jump forward' behavior. We remap <C-i> to <C-p> so <C-p> is 'jump forward' and <C-o> is jump back.
+nnoremap <C-p> <C-i>
 
 nnoremap <leader>y :%y<CR>|  " copy entire buffer
 

@@ -1,5 +1,4 @@
 " Markdown Filetype Settings
-setlocal textwidth=120
 setlocal foldmethod=expr
 setlocal foldexpr=MarkdownFoldLevel()
 

@@ -1,0 +1,7 @@
+# automatically load up node environment from .nvmrc file
+use_nvm() {
+  if [[ -e "/usr/local/opt/nvm/nvm.sh" ]]; then
+    source "/usr/local/opt/nvm/nvm.sh"
+    nvm use
+  fi
+}

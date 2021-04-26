@@ -1,0 +1,10 @@
+#
+# global .gitignore
+#
+
+# sensitive information
+.env
+
+# RC files for CLI tools
+.nvmrc
+.envrc

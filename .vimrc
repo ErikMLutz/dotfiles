@@ -218,6 +218,26 @@ autocmd VimLeave * :call UpdateSession()
 nnoremap <leader>m :call MakeSession()<CR>
 nnoremap <leader>M :call DeleteSession()<CR>
 
+" NetRW Bugfix (doesn't work because of https://github.com/vim/vim/issues/4738)
+" TODO: remove when bug is fixed
+let g:netrw_nogx=1
+
+" This is just temporary workaround until the above issue is truly
+" resolved.
+" https://github.com/vim/vim/issues/4738#issuecomment-830820565
+" https://bugzilla.suse.com/show_bug.cgi?id=1173583
+" (https://bugzilla.suse.com/show_bug.cgi?id=1173583)
+" gh#vim/vim#4738
+function! OpenURLUnderCursor()
+  let s:uri = expand('<cfile>')
+  echom "s:uri = " . s:uri
+  if s:uri != ''
+    exec "!open '".s:uri."'"
+    :redraw!
+  endif
+endfunction
+nnoremap gx :call OpenURLUnderCursor()<CR>
+
 " General Key Bindings
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab
 nnoremap <silent> <tab> gt|               " next tab

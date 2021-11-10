@@ -31,7 +31,7 @@ function! MarkdownFoldLevel()
       return ">" . strlen(matchstr(line, '^#\+'))
     endif
 
-    if line =~ '^\s*```\w\+.*$'  " increase fold level at start of code blocks
+    if line =~ '^\s*```\w*.*$'  " increase fold level at start of code blocks
       return "a1"
     endif
 

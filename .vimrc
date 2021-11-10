@@ -18,9 +18,14 @@ set undodir=~/.vim/undo    " location of undo history file
 set viewdir=~/.vim/view    " location of saved views
 set smartindent            " smarter autoindent based on syntax
 set clipboard=unnamedplus  " copy to system clipboard
+set foldmethod=indent      " use indent folding by default
 set foldlevelstart=99      " always open files unfolded by default
 set textwidth=120          " wider files by default for better readability
 set colorcolumn=121        " highlight edge of file
+set completeopt+=menuone   " show menu even if there is only one match
+set completeopt+=noinsert  " don't auto-insert matches, require user selection
+set completeopt+=noselect  " don't auto-enter completion menu, require user interaction
+set shortmess+=c           " disable extra completion messages
 let mapleader = ','        " use comma as leader key
 
 " Install Plugins
@@ -48,9 +53,87 @@ Plug 'junegunn/limelight.vim'              " hyperfocus text under cursor
 Plug 'preservim/nerdtree'                  " file browser
 Plug 'preservim/nerdcommenter'             " quick comment commands
 Plug 'tmux-plugins/vim-tmux-focus-events'  " hook tmux focus events into FocusGained and FocusLost
-Plug 'fatih/vim-go'                        " everything golang, run GoUpdateBinaries to initialize
+Plug 'neovim/nvim-lspconfig'               " configurations for built in language server client
+Plug 'nvim-lua/completion-nvim'            " lightweight autocomplete based on language server
+Plug 'pierreglaser/folding-nvim'           " cold folding based on language server
+Plug 'nvim-treesitter/nvim-treesitter'     " generic syntax parsing, run :TSUpdate and :TSInstall <language>
+
+Plug 'google/vim-jsonnet'                  " Jsonnet filetype support
 
 call plug#end()
+
+" Language Server
+lua << EOF
+-- https://github.com/neovim/nvim-lspconfig#keybindings-and-completion
+local on_attach = function(client, bufnr)
+  -- enable nvim-lua/completion-nvim plugin
+  require('completion').on_attach()
+
+  -- enable pierreglaser/folding-nvim plugin
+  require('folding').on_attach()
+
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- use LSP for omnifunc
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  -- buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  -- buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  -- buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  -- buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  -- buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  -- buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  -- buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+
+  -- if language server supports textDocument/formatting, run it automatically on save
+  if client.resolved_capabilities.document_formatting then
+    vim.api.nvim_exec([[
+      augroup lsp
+        autocmd! * <buffer>
+        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+      augroup END
+    ]], false)
+  end
+end
+
+require('lspconfig').gopls.setup {
+  cmd = { vim.env.GOPATH .. '/bin/gopls' },
+  on_attach = on_attach,
+  settings = {
+    gopls = {
+      buildFlags = { "-tags=integration" },
+    }
+  }
+}
+EOF
+
+" Tree-sitter
+lua << EOF
+-- must run TSInstall {language} to install parsers
+require('nvim-treesitter.configs').setup {
+  highlight = { enable = true },
+}
+
+EOF
+
+" nvim-lua/completion-nvim
+let g:completion_trigger_on_delete = 1  " refresh autocomplete menu after hitting delete
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
+let g:completion_matching_ignore_case = 1
+
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"|   " use tab to navigate down autocomplete menu
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"  " use shift-tab to navigate up autocomplete menu
 
 " itchyny/lightline.vim
 set noshowmode  " disable default mode label since lightline has it's own

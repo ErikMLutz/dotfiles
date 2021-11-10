@@ -22,14 +22,40 @@ yadm clone https://github.com/ErikMLutz/dotfiles.git
 
 There are a lot of fun features in this repo!
 
-### Languages
+### Generic Language Features
 
-Development in the following languages is supported:
+Generic language tools are implemented using the new [language server client](https://github.com/neovim/nvim-lspconfig)
+and [Tree-sitter](https://github.com/nvim-treesitter/nvim-treesitter) integration in Neovim 0.5. To add a new language,
+first configure the language server with
+[neovim/nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md):
 
-#### Golang
+```vim
+lua << EOF
+-- sample implementation for Go (hence `gopls`)
+require('lspconfig').gopls.setup {
+  ...
+  on_attach = on_attach,  -- this function is implemented in `.vimrc`
+}
+EOF
+```
 
-Go development is enabled with the [fatih/vim-go](https://github.com/fatih/vim-go) plugin for Vim. Run
-`:GoInstallBinaries` from Vim after bootstrapping to install additional requirements for Golang development.
+The install the Tree-sitter parser, e.g. for Go:
+
+```
+:TSInstall go
+```
+
+These two tools provide things like:
+
+* syntax highlighting
+* go-to-definition
+* autocomplete (via [nvim-lua/completion-nvim](https://github.com/nvim-lua/completion-nvim))
+* linting/autoformatting
+* file diagnostics and annotations
+
+If more functionality is needed, e.g. build/execution commands, language specific plugins like
+[fatih/vim-go](https://github.com/fatih/vim-go) can be installed. In these cases, conflicting functionatlity (e.g.
+completion) should be disabled for the plugin in favor of the more universal implementation described above.
 
 ### DDev
 

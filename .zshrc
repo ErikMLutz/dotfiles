@@ -165,3 +165,5 @@ export ZSHRC_SOURCED="TRUE"
 
 # source any local settings from a separate file
 [ -e ~/.zshrc.local ] || [ -L ~/.zshrc.local ] && source ~/.zshrc.local
+
+autoload -U +X bashcompinit && bashcompinit

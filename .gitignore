@@ -8,3 +8,4 @@
 # RC files for CLI tools
 .nvmrc
 .envrc
+.evans.toml

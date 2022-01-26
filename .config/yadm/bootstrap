@@ -24,7 +24,7 @@ if [ "$system_type" = "Darwin" ]; then
 
   if command -v /usr/bin/python3 >/dev/null 2>&1; then
     echo "Installing required Python modules"
-    /usr/bin/python3 -m pip install --upgrade pip neovim
+    /usr/bin/python3 -m pip install --upgrade pip pynvim
   fi
 fi
 

@@ -28,6 +28,10 @@ set completeopt+=noselect  " don't auto-enter completion menu, require user inte
 set shortmess+=c           " disable extra completion messages
 let mapleader = ','        " use comma as leader key
 
+" Providers
+let g:python_host_prog  = '/usr/bin/python'
+let g:python3_host_prog  = '/usr/bin/python3'
+
 " Install Plugins
 if empty(glob('~/.vim/autoload/plug.vim'))  " auto install vim-plug
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -54,49 +58,59 @@ Plug 'preservim/nerdtree'                  " file browser
 Plug 'preservim/nerdcommenter'             " quick comment commands
 Plug 'tmux-plugins/vim-tmux-focus-events'  " hook tmux focus events into FocusGained and FocusLost
 Plug 'neovim/nvim-lspconfig'               " configurations for built in language server client
-Plug 'nvim-lua/completion-nvim'            " lightweight autocomplete based on language server
-Plug 'pierreglaser/folding-nvim'           " cold folding based on language server
+Plug 'hrsh7th/nvim-cmp'                    " completion engine
+Plug 'hrsh7th/cmp-nvim-lsp'                " native LSP source for completion engine
+Plug 'hrsh7th/cmp-buffer'                  " completion from buffer words
+Plug 'hrsh7th/cmp-path'                    " completion for filesystem paths
+Plug 'hrsh7th/cmp-cmdline'                 " completion for Vim's command and search modes (':' and '/')
+Plug 'sirver/ultisnips'                    " snippet engine, required for nvim-cmp
+Plug 'honza/vim-snippets'                  " snippets for ultisnips
+Plug 'quangnguyen30192/cmp-nvim-ultisnips' " nvim-cmp integration for ultisnips
+Plug 'pierreglaser/folding-nvim'           " code folding based on language server
 Plug 'nvim-treesitter/nvim-treesitter'     " generic syntax parsing, run :TSUpdate and :TSInstall <language>
-
 Plug 'google/vim-jsonnet'                  " Jsonnet filetype support
 
 call plug#end()
 
-" Language Server
+" neovim/nvim-lspconfig
 lua << EOF
--- https://github.com/neovim/nvim-lspconfig#keybindings-and-completion
-local on_attach = function(client, bufnr)
-  -- enable nvim-lua/completion-nvim plugin
-  require('completion').on_attach()
+-- https://github.com/neovim/nvim-lspconfig#suggested-configuration
 
+-- Mappings.
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+local opts = { noremap=true, silent=true }
+
+-- vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+-- vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+-- vim.api.nvim_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
   -- enable pierreglaser/folding-nvim plugin
   require('folding').on_attach()
 
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  -- use LSP for omnifunc
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+  -- Enable completion triggered by <c-x><c-o>, currently using hrsh7th/nvim-cmp instead
+  -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
-  local opts = { noremap=true, silent=true }
-  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  -- buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  -- buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  -- buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  -- buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  -- buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  -- buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  -- buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  -- vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 
-  -- if language server supports textDocument/formatting, run it automatically on save
+    -- if language server supports textDocument/formatting, run it automatically on save
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_exec([[
       augroup lsp
@@ -107,33 +121,96 @@ local on_attach = function(client, bufnr)
   end
 end
 
+-- include hrsh7th/cmp-nvim-lsp capabilites
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
 require('lspconfig').gopls.setup {
   cmd = { vim.env.GOPATH .. '/bin/gopls' },
   on_attach = on_attach,
+  capabilities = capabilities,
   settings = {
     gopls = {
       buildFlags = { "-tags=integration" },
     }
+  },
+  flags = {
+    -- This will be the default in neovim 0.7+
+    debounce_text_changes = 150,
   }
 }
 EOF
 
-" Tree-sitter
+" nvim-treesitter/nvim-treesitter
 lua << EOF
 -- must run TSInstall {language} to install parsers
 require('nvim-treesitter.configs').setup {
   highlight = { enable = true },
 }
-
 EOF
 
-" nvim-lua/completion-nvim
-let g:completion_trigger_on_delete = 1  " refresh autocomplete menu after hitting delete
-let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy', 'all']
-let g:completion_matching_ignore_case = 1
+" hrsh7th/cmp-nvim-lsp
+lua << EOF
+-- https://github.com/hrsh7th/nvim-cmp#recommended-configuration
+-- Setup nvim-cmp.
+local cmp = require('cmp')
 
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"|   " use tab to navigate down autocomplete menu
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"  " use shift-tab to navigate up autocomplete menu
+cmp.setup({
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    end,
+  },
+  mapping = {
+    ['<Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback() -- If you are using vim-endwise, this fallback function will be behaive as the vim-endwise.
+      end
+    end,
+    ['<S-Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback() -- If you are using vim-endwise, this fallback function will be behaive as the vim-endwise.
+      end
+    end,
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+    ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+    ['<C-e>'] = cmp.mapping({
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    }),
+  },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'buffer' },
+    { name = 'path' },
+  })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' }
+  },
+  completion = {
+    autocomplete = false,
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' },
+    { name = 'cmdline' },
+  })
+})
+EOF
 
 " itchyny/lightline.vim
 set noshowmode  " disable default mode label since lightline has it's own
@@ -154,7 +231,6 @@ let g:lightline = {
   \   'separator': { 'left': '', 'right': '' },
   \   'subseparator': { 'left': '', 'right': '' },
   \ }
-
 
 command! LightlineReload call LightlineReload()  " Reload lightline, for use with ddev sync
 function! LightlineReload()

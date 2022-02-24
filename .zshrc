@@ -167,3 +167,41 @@ export ZSHRC_SOURCED="TRUE"
 [ -e ~/.zshrc.local ] || [ -L ~/.zshrc.local ] && source ~/.zshrc.local
 
 autoload -U +X bashcompinit && bashcompinit
+
+# --------------------------------------------------------------------------------------------------
+#                                            easter eggs
+# --------------------------------------------------------------------------------------------------
+
+# When's the next Hohmann transfer window to mars?
+whenmars () {
+  local rsp
+  local year_days
+
+  rsp=$(
+    curl -s \
+      -d "activity=retrieve" \
+      -d "coordinate=1" \
+      -d "equinox=2" \
+      -d "object=04" \
+      -d "object2=42" \
+      -d "resolution=001" \
+      -d "start_year=$(date -u +%Y)" \
+      -d "start_day=$(date -u +%j)" \
+      -d "stop_year=$(($(date -u +%Y) + 3))" \
+      -d "stop_day=366" \
+      https://omniweb.gsfc.nasa.gov/cgi/models/helios1.cgi
+  )
+
+  year_days=$(
+    echo $rsp \
+      | tail +10 \
+      | sed '$d' \
+      | grep '315\.\d' \
+      | head -n 1 \
+      | cut -f 1,2 -d ' '
+  )
+
+  echo $year_days \
+    | xargs -L1 bash -c \
+      'echo "The next Hohmann transfer window to Mars is $(date -v$0y -v1d -v1m -v+$1d -v-1d -u +%Y-%m-%d)."'
+}

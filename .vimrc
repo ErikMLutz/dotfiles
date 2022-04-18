@@ -2,6 +2,7 @@
 
 " Filetype plugin files (<C-w>gf to open file under cursor in new tab)
 " ~/.config/nvim/after/ftplugin/markdown.vim
+" ~/.config/nvim/after/ftplugin/rego.vim
 " ~/.config/nvim/after/ftplugin/go.vim
 
 " General

@@ -119,8 +119,15 @@ ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(bracketed-paste accept-line)
 typeset -aU ZSH_AUTOSUGGEST_CLEAR_WIDGETS
 
 # KEY BINDINGS
-bindkey "^[OA" up-line-or-history  # vi-mode defaults this to up-line-or-beginning-search
-bindkey "^[OB" down-line-or-history  # vi-mode defaults this to down-line-or-beginning-search
+bindkey "^[OA" up-line-or-history                   # (UpArrowKey) vi-mode defaults to up-line-or-beginning-search
+bindkey "^[OB" down-line-or-history                 # (DownArroyKey) vi-mode defaults to down-line-or-beginning-search
+bindkey "^L"   kill-line                            # (ctrl-l) delete line to right of cursor
+bindkey "^H"   backward-kill-line                   # (ctrl-h) delete line to left of cursor
+bindkey "^U"   undo                                 # (ctrl-u) undo last edit
+bindkey "^R"   redo                                 # (ctrl-r) redo last edit
+bindkey "^S"   history-incremental-search-backward  # (ctrl-s) search history
+bindkey "^P"   forward-word                         # (ctrl-p) move back one word
+bindkey "^O"   backward-word                        # (ctrl-o) move forward one word
 
 # --------------------------------------------------------------------------------------------------
 #                                               fzf

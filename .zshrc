@@ -164,6 +164,9 @@ alias nvim="NVIM_LISTEN_ADDRESS=/tmp/nvim nvim"
 # quick access to journal in Vim
 alias j="nvim +'let g:journal_from_zsh=1' +'call ToggleJournal()'"
 
+# open cheatsheet
+alias cheat="bat ~/.cheatsheet.md"
+
 # apply p10k theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 

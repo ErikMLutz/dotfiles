@@ -1,7 +1,7 @@
 " Rego Filetype Settings
 
 setlocal nosmartindent
-setlocal expandtab
+setlocal noexpandtab
 setlocal shiftround                      " Round indent to multiple of 'shiftwidth'
 setlocal autoindent                      " Copy indent from current line, over to the new line
 

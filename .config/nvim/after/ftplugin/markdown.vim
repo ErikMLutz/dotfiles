@@ -2,7 +2,7 @@
 setlocal foldmethod=expr
 setlocal foldexpr=MarkdownFoldLevel()
 
-let g:markdown_fenced_languages = ['sh', 'python']  " languages to highlight in fenced blocks
+let g:markdown_fenced_languages = ['bash=sh', 'python', 'json', 'yaml']  " languages to highlight in fenced blocks
 let g:markdown_checkbox_states = [ ' ', 'X']        " checkbox states in cycle order
 
 " toggle '* [ ]' checkboxes between g:markdown_checkbox_states
@@ -31,12 +31,12 @@ function! MarkdownFoldLevel()
       return ">" . strlen(matchstr(line, '^#\+'))
     endif
 
-    if line =~ '^\s*```\w*.*$'  " increase fold level at start of code blocks
-      return "a1"
-    endif
-
     if line =~ '^\s*```$'  " decrease fold level at end of code blocks
       return "s1"
+    endif
+
+    if line =~ '^\s*```\w*.*$'  " increase fold level at start of code blocks
+      return "a1"
     endif
 
     return "="  " use fold level of previous line by default

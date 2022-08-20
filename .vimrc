@@ -96,7 +96,7 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
 
   -- if language server supports textDocument/formatting, run it automatically on save
-  if client.resolved_capabilities.document_formatting then
+  if client.server_capabilities.documentFormattingProvider then
     vim.api.nvim_exec([[
       augroup lsp
         autocmd! * <buffer>
@@ -109,19 +109,27 @@ end
 -- include hrsh7th/cmp-nvim-lsp capabilites
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-require('lspconfig').gopls.setup {
-  cmd = { vim.env.GOPATH .. '/bin/gopls' },
+if vim.env.GOPATH then
+  require('lspconfig').gopls.setup {
+    cmd = { vim.env.GOPATH .. '/bin/gopls' },
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+      gopls = {
+        buildFlags = { "-tags=integration" },
+      }
+    },
+    flags = {
+      -- This will be the default in neovim 0.7+
+      debounce_text_changes = 150,
+    }
+  }
+
+end
+
+require('lspconfig').ccls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
-  settings = {
-    gopls = {
-      buildFlags = { "-tags=integration" },
-    }
-  },
-  flags = {
-    -- This will be the default in neovim 0.7+
-    debounce_text_changes = 150,
-  }
 }
 EOF
 

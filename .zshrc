@@ -146,7 +146,7 @@ export FZF_DEFAULT_OPTS="\
   --color preview-fg:${FOREGROUND_COLOR/default/-1} \
   --color preview-bg:${BACKGROUND_COLOR/default/-1} \
   "
-export FZF_DEFAULT_COMMAND='rg --files --hidden'
+export FZF_DEFAULT_COMMAND='rg --files'
 
 # --------------------------------------------------------------------------------------------------
 #                                           miscellaneous 

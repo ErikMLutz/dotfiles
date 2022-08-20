@@ -86,6 +86,12 @@ Subcommands:
   tags                        Open a file based on ctags.
 ```
 
+#### Searching Hidden Files
+
+By default FZF will not list hidden files because `--hidden` is not specified in the `FZF_DEFAULT_COMMAND` variable that
+is set in `.zshrc`. To override this behavior for specific hidden files or directories create a `.ignore` file in the
+project root where you are searching and add a negative assertion like `!.cache/` or `.env`.
+
 ### Vim Tools
 
 #### Quick Access Journal

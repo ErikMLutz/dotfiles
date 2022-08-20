@@ -64,6 +64,7 @@ Plug 'hrsh7th/cmp-nvim-lsp'                " native LSP source for completion en
 Plug 'hrsh7th/cmp-buffer'                  " completion from buffer words
 Plug 'hrsh7th/cmp-path'                    " completion for filesystem paths
 Plug 'hrsh7th/cmp-cmdline'                 " completion for Vim's command and search modes (':' and '/')
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help' " completion for function signatures with current parameter emphasized
 Plug 'sirver/ultisnips'                    " snippet engine, required for nvim-cmp
 Plug 'honza/vim-snippets'                  " snippets for ultisnips
 Plug 'quangnguyen30192/cmp-nvim-ultisnips' " nvim-cmp integration for ultisnips
@@ -171,6 +172,7 @@ cmp.setup({
     }),
   },
   sources = cmp.config.sources({
+    { name = 'nvim_lsp_signature_help' },
     { name = 'nvim_lsp' },
     { name = 'buffer' },
     { name = 'path' },

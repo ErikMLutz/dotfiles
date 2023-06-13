@@ -6,6 +6,8 @@
 " ~/.config/nvim/after/ftplugin/go.vim
 
 " General
+set secure                 " prevent dangerous commands when loading local config files
+set exrc                   " load local config files if they exist
 set mouse=a                " allow mouse controls for all modes
 set backspace=2            " allow backspacing over end of lines
 set number                 " show line numbers
@@ -57,7 +59,6 @@ Plug 'junegunn/goyo.vim'                   " distraction free mode
 Plug 'junegunn/limelight.vim'              " hyperfocus text under cursor
 Plug 'preservim/nerdtree'                  " file browser
 Plug 'preservim/nerdcommenter'             " quick comment commands
-Plug 'tmux-plugins/vim-tmux-focus-events'  " hook tmux focus events into FocusGained and FocusLost
 Plug 'neovim/nvim-lspconfig'               " configurations for built in language server client
 Plug 'hrsh7th/nvim-cmp'                    " completion engine
 Plug 'hrsh7th/cmp-nvim-lsp'                " native LSP source for completion engine
@@ -238,7 +239,7 @@ endfunction
 let g:fzf_files_options = ' --tiebreak end --preview "bat --color always {}"'  " use bat with colors for preview
 command! -bang -nargs=* Rg
   \  call fzf#vim#grep(
-  \    'rg --column --line-number --no-heading --color=always --smart-case --hidden '.shellescape(<q-args>),
+  \    'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
   \    1,
   \    fzf#vim#with_preview({'options': ['--tiebreak=end']}), <bang>0)  " modify Rg command to include preview
 

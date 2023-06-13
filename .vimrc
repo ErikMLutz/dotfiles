@@ -95,20 +95,21 @@ local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
 
   -- if language server supports textDocument/formatting, run it automatically on save
   if client.server_capabilities.documentFormattingProvider then
     vim.api.nvim_exec([[
       augroup lsp
         autocmd! * <buffer>
-        autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+        autocmd BufWritePre <buffer> lua vim.lsp.buf.format()
       augroup END
     ]], false)
   end
 end
 
 -- include hrsh7th/cmp-nvim-lsp capabilites
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 if vim.env.GOPATH then
   require('lspconfig').gopls.setup {
@@ -128,9 +129,10 @@ if vim.env.GOPATH then
 
 end
 
-require('lspconfig').ccls.setup {
+require('lspconfig').clangd.setup {
   on_attach = on_attach,
   capabilities = capabilities,
+  cmd = { "clangd", "--background-index", "--enable-config"}
 }
 EOF
 

@@ -72,6 +72,7 @@ Plug 'quangnguyen30192/cmp-nvim-ultisnips' " nvim-cmp integration for ultisnips
 Plug 'nvim-treesitter/nvim-treesitter'     " generic syntax parsing, run :TSUpdate and :TSInstall <language>
 Plug 'google/vim-jsonnet'                  " Jsonnet filetype support
 
+Plug 'salkin-mada/openscad.nvim'           " OpenSCAD support
 call plug#end()
 
 " neovim/nvim-lspconfig

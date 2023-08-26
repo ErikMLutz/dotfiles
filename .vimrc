@@ -71,8 +71,9 @@ Plug 'honza/vim-snippets'                  " snippets for ultisnips
 Plug 'quangnguyen30192/cmp-nvim-ultisnips' " nvim-cmp integration for ultisnips
 Plug 'nvim-treesitter/nvim-treesitter'     " generic syntax parsing, run :TSUpdate and :TSInstall <language>
 Plug 'google/vim-jsonnet'                  " Jsonnet filetype support
-
 Plug 'salkin-mada/openscad.nvim'           " OpenSCAD support
+Plug 'christoomey/vim-tmux-navigator'    " unify nvim and tmux pane navigation
+
 call plug#end()
 
 " neovim/nvim-lspconfig

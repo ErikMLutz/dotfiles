@@ -15,7 +15,7 @@ fi
 export EDITOR=nvim
 
 # add DDev commands to path
-export PATH=~/.ddev/bin:$PATH
+export PATH=~/.ddev/bin:~/.dotfiles/bin:$PATH
 
 # use bat for syntax highlighted man pages
 export MANPAGER="sh -c 'col -bx | bat --language=man'"
@@ -37,7 +37,7 @@ source ~/.ddev/source/fzf-extensions
 
 # run ddev initialization only once, NB this needs to be run prior to anything that requires
 # DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
-[ -z $ZSHRC_SOURCED ] && ddev init
+ddev init
 
 # establish precmd function
 precmd () {
@@ -67,7 +67,7 @@ plugins=(
 )
 
 # source oh-my-zsh once to avoid slow downs
-[ -z $ZSHRC_SOURCED ] && source $ZSH/oh-my-zsh.sh
+source $ZSH/oh-my-zsh.sh
 
 # --------------------------------------------------------------------------------------------------
 #                                          zsh configuration
@@ -88,8 +88,8 @@ zstyle ":completion:*:*:docker:*" option-stacking yes
 zstyle ":completion:*:*:docker-*:*" option-stacking yes
 
 # source autosuggestions and syntax highlighting
-[ -z $ZSHRC_SOURCED ] && source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-[ -z $ZSHRC_SOURCED ] && source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # source function to toggle per directory history using ^g
 source $ZSH/plugins/per-directory-history/per-directory-history.zsh
@@ -169,9 +169,6 @@ alias cheat="bat ~/.cheatsheet.md"
 
 # apply p10k theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# signal to skip certain commands on subsequent runs
-export ZSHRC_SOURCED="TRUE"
 
 # source any local settings from a separate file
 [ -e ~/.zshrc.local ] || [ -L ~/.zshrc.local ] && source ~/.zshrc.local

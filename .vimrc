@@ -136,6 +136,11 @@ require('lspconfig').clangd.setup {
   capabilities = capabilities,
   cmd = { "clangd", "--background-index", "--enable-config"}
 }
+
+require('lspconfig').jedi_language_server.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
 EOF
 
 " nvim-treesitter/nvim-treesitter

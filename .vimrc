@@ -53,8 +53,6 @@ Plug 'tpope/vim-abolish'                   " better abbreviation and substitutio
 Plug 'tpope/vim-eunuch'                    " common Unix commands
 Plug 'tpope/vim-sleuth'                    " automatically detect and set expandtab and shiftwidth
 Plug 'tpope/vim-repeat'                    " add repeat (.) compatibility for many plugins
-Plug 'junegunn/fzf'                        " fzf base functionality
-Plug 'junegunn/fzf.vim'                    " additional fzf integrations with vim
 Plug 'junegunn/goyo.vim'                   " distraction free mode
 Plug 'junegunn/limelight.vim'              " hyperfocus text under cursor
 Plug 'preservim/nerdtree'                  " file browser
@@ -72,7 +70,8 @@ Plug 'quangnguyen30192/cmp-nvim-ultisnips' " nvim-cmp integration for ultisnips
 Plug 'nvim-treesitter/nvim-treesitter'     " generic syntax parsing, run :TSUpdate and :TSInstall <language>
 Plug 'google/vim-jsonnet'                  " Jsonnet filetype support
 Plug 'salkin-mada/openscad.nvim'           " OpenSCAD support
-Plug 'christoomey/vim-tmux-navigator'    " unify nvim and tmux pane navigation
+Plug 'nvim-lua/plenary.nvim'               " dependency for telescope below
+Plug 'nvim-telescope/telescope.nvim'       " fuzzy finder
 
 call plug#end()
 
@@ -113,7 +112,7 @@ end
 -- include hrsh7th/cmp-nvim-lsp capabilites
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-if vim.env.GOPATH then
+if vim.env.GOROOT or vim.env.GOPATH then
   require('lspconfig').gopls.setup {
     cmd = { vim.env.GOPATH .. '/bin/gopls' },
     on_attach = on_attach,
@@ -128,7 +127,6 @@ if vim.env.GOPATH then
       debounce_text_changes = 150,
     }
   }
-
 end
 
 require('lspconfig').clangd.setup {
@@ -244,16 +242,9 @@ function! LightlineReload()
   call lightline#update()
 endfunction
 
-" junegunn/fzf.vim
-let g:fzf_files_options = ' --tiebreak end --preview "bat --color always {}"'  " use bat with colors for preview
-command! -bang -nargs=* Rg
-  \  call fzf#vim#grep(
-  \    'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>),
-  \    1,
-  \    fzf#vim#with_preview({'options': ['--tiebreak=end']}), <bang>0)  " modify Rg command to include preview
-
-map ; :Files<CR>|       " use fzf to search file list, mirrors DDev's "f nvim" command
-map <leader>; :Rg<CR>|  " use fzf to search within files, mirrors DDev's "f" command
+" nvim-telescope/telescope.nvim
+map ; :Telescope find_files<CR>|       " use fzf to search file list, mirrors DDev's "f nvim" command
+map <leader>; :Telescope live_grep<CR>|  " use fzf to search within files, mirrors DDev's "f" command
 
 " junegunn/goyo.vim
 autocmd! User GoyoEnter Limelight  " sync Limelight with Goyo

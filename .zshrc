@@ -175,6 +175,10 @@ alias cheat="bat ~/.cheatsheet.md"
 
 autoload -U +X bashcompinit && bashcompinit
 
+# git aliases for cleaning up untracked local branched
+alias git-list-untracked='git fetch --prune && git branch -r | awk "{print \$1}" | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk "{print \$1}"'
+alias git-remove-untracked='git fetch --prune && git branch -r | awk "{print \$1}" | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk "{print \$1}" | xargs git branch -D'
+
 # --------------------------------------------------------------------------------------------------
 #                                            easter eggs
 # --------------------------------------------------------------------------------------------------

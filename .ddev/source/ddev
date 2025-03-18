@@ -171,7 +171,7 @@ ddev () {
         export PROFILE_NAME="$PROFILE_NAME"
       fi
 
-      [ -z "$DDEV_NO_SOURCE_ZSHRC" ] && source ~/.zshrc
+      source ~/.p10k.zsh
       /usr/bin/python3 ~/.ddev/misc/sync_neovim_theme.py
 
       ddev_theme_save

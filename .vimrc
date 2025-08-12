@@ -44,34 +44,37 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'chriskempson/base16-vim'             " library of colorschemes that match DDev shell themes
-Plug 'itchyny/lightline.vim'               " lightweight Powerline for Vim
-Plug 'tpope/vim-speeddating'               " increment and decrement support for datetimes
-Plug 'tpope/vim-fugitive'                  " Git integration
-Plug 'tpope/vim-surround'                  " interact with 'surroundings' like quotes or parentheses
-Plug 'tpope/vim-abolish'                   " better abbreviation and substitution
-Plug 'tpope/vim-eunuch'                    " common Unix commands
-Plug 'tpope/vim-sleuth'                    " automatically detect and set expandtab and shiftwidth
-Plug 'tpope/vim-repeat'                    " add repeat (.) compatibility for many plugins
-Plug 'junegunn/goyo.vim'                   " distraction free mode
-Plug 'junegunn/limelight.vim'              " hyperfocus text under cursor
-Plug 'preservim/nerdtree'                  " file browser
-Plug 'preservim/nerdcommenter'             " quick comment commands
-Plug 'neovim/nvim-lspconfig'               " configurations for built in language server client
-Plug 'hrsh7th/nvim-cmp'                    " completion engine
-Plug 'hrsh7th/cmp-nvim-lsp'                " native LSP source for completion engine
-Plug 'hrsh7th/cmp-buffer'                  " completion from buffer words
-Plug 'hrsh7th/cmp-path'                    " completion for filesystem paths
-Plug 'hrsh7th/cmp-cmdline'                 " completion for Vim's command and search modes (':' and '/')
-Plug 'hrsh7th/cmp-nvim-lsp-signature-help' " completion for function signatures with current parameter emphasized
-Plug 'sirver/ultisnips'                    " snippet engine, required for nvim-cmp
-Plug 'honza/vim-snippets'                  " snippets for ultisnips
-Plug 'quangnguyen30192/cmp-nvim-ultisnips' " nvim-cmp integration for ultisnips
-Plug 'nvim-treesitter/nvim-treesitter'     " generic syntax parsing, run :TSUpdate and :TSInstall <language>
-Plug 'google/vim-jsonnet'                  " Jsonnet filetype support
-Plug 'salkin-mada/openscad.nvim'           " OpenSCAD support
-Plug 'nvim-lua/plenary.nvim'               " dependency for telescope below
-Plug 'nvim-telescope/telescope.nvim'       " fuzzy finder
+Plug 'chriskempson/base16-vim'                  " library of colorschemes that match DDev shell themes
+Plug 'itchyny/lightline.vim'                    " lightweight Powerline for Vim
+Plug 'tpope/vim-speeddating'                    " increment and decrement support for datetimes
+Plug 'tpope/vim-fugitive'                       " Git integration
+Plug 'tpope/vim-surround'                       " interact with 'surroundings' like quotes or parentheses
+Plug 'tpope/vim-abolish'                        " better abbreviation and substitution
+Plug 'tpope/vim-eunuch'                         " common Unix commands
+Plug 'tpope/vim-sleuth'                         " automatically detect and set expandtab and shiftwidth
+Plug 'tpope/vim-repeat'                         " add repeat (.) compatibility for many plugins
+Plug 'junegunn/goyo.vim'                        " distraction free mode
+Plug 'junegunn/limelight.vim'                   " hyperfocus text under cursor
+Plug 'preservim/nerdtree'                       " file browser
+Plug 'preservim/nerdcommenter'                  " quick comment commands
+Plug 'neovim/nvim-lspconfig'                    " configurations for built in language server client
+Plug 'hrsh7th/nvim-cmp'                         " completion engine
+Plug 'hrsh7th/cmp-nvim-lsp'                     " native LSP source for completion engine
+Plug 'hrsh7th/cmp-buffer'                       " completion from buffer words
+Plug 'hrsh7th/cmp-path'                         " completion for filesystem paths
+Plug 'hrsh7th/cmp-cmdline'                      " completion for Vim's command and search modes (':' and '/')
+Plug 'hrsh7th/cmp-nvim-lsp-signature-help'      " completion for function signatures with current parameter emphasized
+Plug 'sirver/ultisnips'                         " snippet engine, required for nvim-cmp
+Plug 'honza/vim-snippets'                       " snippets for ultisnips
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'      " nvim-cmp integration for ultisnips
+Plug 'nvim-treesitter/nvim-treesitter'          " generic syntax parsing, run :TSUpdate and :TSInstall <language>
+Plug 'google/vim-jsonnet'                       " Jsonnet filetype support
+Plug 'salkin-mada/openscad.nvim'                " OpenSCAD support
+Plug 'nvim-lua/plenary.nvim'                    " dependency for telescope below
+Plug 'nvim-telescope/telescope.nvim'            " fuzzy finder
+Plug 'nvim-telescope/telescope-ui-select.nvim'  " use telescope as vim ui picker
+Plug 'github/copilot.vim'                       " GitHub Copilot
+Plug 'CopilotC-Nvim/CopilotChat.nvim'           " GitHub Copilot Chat
 
 call plug#end()
 
@@ -136,6 +139,11 @@ require('lspconfig').clangd.setup {
 }
 
 require('lspconfig').jedi_language_server.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
+require('lspconfig').ts_ls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
 }
@@ -245,6 +253,9 @@ endfunction
 " nvim-telescope/telescope.nvim
 map ; :Telescope find_files<CR>|       " use fzf to search file list, mirrors DDev's "f nvim" command
 map <leader>; :Telescope live_grep<CR>|  " use fzf to search within files, mirrors DDev's "f" command
+lua << EOF
+require("telescope").load_extension("ui-select")
+EOF
 
 " junegunn/goyo.vim
 autocmd! User GoyoEnter Limelight  " sync Limelight with Goyo
@@ -323,53 +334,6 @@ endfunction
 
 nnoremap <silent> <leader>j :call ToggleJournal()<CR>|  " open and close journal
 
-" Session Management
-function! MakeSession()  " explicitly write a session
-  let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
-  if (filewritable(b:sessiondir) != 2)
-    execute 'silent !mkdir -p ' . b:sessiondir
-    redraw!
-  endif
-  let b:sessionfile = b:sessiondir . '/session.vim'
-  execute 'mksession! ' . b:sessionfile
-endfunction
-
-function! DeleteSession()  " explicitly delete a session
-  let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
-  let b:sessionfile = b:sessiondir . '/session.vim'
-  if (filereadable(b:sessionfile))
-    execute 'silent !rm ' . b:sessionfile
-  endif
-endfunction
-
-function! UpdateSession()  " update a session, only if it exists
-  if argc() == 0  " don't save if nvim is called on a specific file
-    let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
-    let b:sessionfile = b:sessiondir . '/session.vim'
-    if (filereadable(b:sessionfile))
-      execute 'mksession! ' . b:sessionfile
-    endif
-  endif
-endfunction
-
-function! LoadSession()  " load a session, only if it exists
-  if argc() == 0  " don't load if nvim is called on a specific file
-    let b:sessiondir = $HOME . '/.vim/sessions' . getcwd()
-    let b:sessionfile = b:sessiondir . '/session.vim'
-    if (filereadable(b:sessionfile))
-      execute 'source ' b:sessionfile
-    endif
-  else
-    let b:sessionfile = ''
-    let b:sessiondir = ''
-  endif
-endfunction
-
-autocmd VimEnter * nested :call LoadSession()
-autocmd VimLeave * :call UpdateSession()
-nnoremap <leader>m :call MakeSession()<CR>
-nnoremap <leader>M :call DeleteSession()<CR>
-
 " NetRW Bugfix (doesn't work because of https://github.com/vim/vim/issues/4738)
 " TODO: remove when bug is fixed
 let g:netrw_nogx=1
@@ -389,6 +353,27 @@ function! OpenURLUnderCursor()
   endif
 endfunction
 nnoremap gx :call OpenURLUnderCursor()<CR>
+
+" Copilot
+let g:copilot_workspace_folders = [getcwd()]
+lua << EOF
+vim.g.copilot_no_tab_map = true
+vim.api.nvim_set_keymap("i", "<C-l>", 'copilot#Accept("")', { silent = true, expr = true })
+EOF
+
+" Copilot Chat
+nmap <silent> <leader>ai :CopilotChat<CR>| " open Copilot Chat
+lua << EOF
+require("CopilotChat").setup {
+  model = 'claude-sonnet-4',
+  mappings = {
+    reset = {
+      normal = '<C-q>',
+      insert = '<C-q>',
+    },
+  },
+}
+EOF
 
 " General Key Bindings
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab

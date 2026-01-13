@@ -116,7 +116,7 @@ end
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 if vim.env.GOROOT or vim.env.GOPATH then
-  vim.lsp.config.gopls.setup {
+  vim.lsp.config('gopls', {
     cmd = { vim.env.GOPATH .. '/bin/gopls' },
     on_attach = on_attach,
     capabilities = capabilities,
@@ -129,24 +129,24 @@ if vim.env.GOROOT or vim.env.GOPATH then
       -- This will be the default in neovim 0.7+
       debounce_text_changes = 150,
     }
-  }
+  })
 end
 
-vim.lsp.config.clangd.setup {
+vim.lsp.config('clangd', {
   on_attach = on_attach,
   capabilities = capabilities,
   cmd = { "clangd", "--background-index", "--enable-config"}
-}
+})
 
-vim.lsp.config.jedi_language_server.setup {
+vim.lsp.config('jedi_language_server', {
   on_attach = on_attach,
   capabilities = capabilities,
-}
+})
 
-vim.lsp.config.ts_ls.setup {
+vim.lsp.config('ts_ls', {
   on_attach = on_attach,
   capabilities = capabilities,
-}
+})
 EOF
 
 " nvim-treesitter/nvim-treesitter

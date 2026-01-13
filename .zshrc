@@ -158,9 +158,6 @@ export FZF_DEFAULT_COMMAND='rg --files'
 # hook direnv into shell
 eval "$(direnv hook zsh)"
 
-# set Neovim to listen to /tmp/nvim so that commands can be sent to all Neovim instances
-alias nvim="NVIM_LISTEN_ADDRESS=/tmp/nvim nvim"
-
 # quick access to journal in Vim
 alias j="nvim +'let g:journal_from_zsh=1' +'call ToggleJournal()'"
 

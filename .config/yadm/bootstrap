@@ -55,7 +55,10 @@ fi
 
 if [ ! -d "$HOME/.ddev/themes" ]; then
   echo "Generating themes"
-  svn export https://github.com/chriskempson/base16-shell/trunk/scripts $HOME/.ddev/themes
+  mkdir /tmp/base16-shell
+  git clone https://github.com/chriskempson/base16-shell.git /tmp/base16-shell
+  cp -r /tmp/base16-shell/scripts $HOME/.ddev/themes
+  rm -rf /tmp/base16-shell
   source $HOME/.ddev/source/_ddev_convert_theme_file
   for theme in $HOME/.ddev/themes/*; do _ddev_convert_theme_file $theme; done
   rm $HOME/.ddev/themes/base16-*

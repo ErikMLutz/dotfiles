@@ -1,5 +1,3 @@
-tap "homebrew/cask-fonts"
-
 # zsh and extensions
 brew "zsh"
 brew "zsh-completion"
@@ -25,12 +23,9 @@ brew "ripgrep"
 brew "git-flow"
 brew "gnu-getopt"
 
-# fonts
-cask "font-hack-nerd-font"
-
 # applications
 cask "iterm2"
-cask "docker"
+cask "docker-desktop"
 cask "postman"
 cask "karabiner-elements"
 

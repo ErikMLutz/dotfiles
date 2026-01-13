@@ -116,7 +116,7 @@ end
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 if vim.env.GOROOT or vim.env.GOPATH then
-  require('lspconfig').gopls.setup {
+  vim.lsp.config.gopls.setup {
     cmd = { vim.env.GOPATH .. '/bin/gopls' },
     on_attach = on_attach,
     capabilities = capabilities,
@@ -132,18 +132,18 @@ if vim.env.GOROOT or vim.env.GOPATH then
   }
 end
 
-require('lspconfig').clangd.setup {
+vim.lsp.config.clangd.setup {
   on_attach = on_attach,
   capabilities = capabilities,
   cmd = { "clangd", "--background-index", "--enable-config"}
 }
 
-require('lspconfig').jedi_language_server.setup {
+vim.lsp.config.jedi_language_server.setup {
   on_attach = on_attach,
   capabilities = capabilities,
 }
 
-require('lspconfig').ts_ls.setup {
+vim.lsp.config.ts_ls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
 }
@@ -152,7 +152,7 @@ EOF
 " nvim-treesitter/nvim-treesitter
 lua << EOF
 -- must run TSInstall {language} to install parsers
-require('nvim-treesitter.configs').setup {
+require('nvim-treesitter').setup {
   highlight = { enable = true },
 }
 EOF

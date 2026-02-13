@@ -73,8 +73,6 @@ Plug 'salkin-mada/openscad.nvim'                " OpenSCAD support
 Plug 'nvim-lua/plenary.nvim'                    " dependency for telescope below
 Plug 'nvim-telescope/telescope.nvim'            " fuzzy finder
 Plug 'nvim-telescope/telescope-ui-select.nvim'  " use telescope as vim ui picker
-Plug 'github/copilot.vim'                       " GitHub Copilot
-Plug 'CopilotC-Nvim/CopilotChat.nvim'           " GitHub Copilot Chat
 
 call plug#end()
 
@@ -353,27 +351,6 @@ function! OpenURLUnderCursor()
   endif
 endfunction
 nnoremap gx :call OpenURLUnderCursor()<CR>
-
-" Copilot
-let g:copilot_workspace_folders = [getcwd()]
-lua << EOF
-vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap("i", "<C-l>", 'copilot#Accept("")', { silent = true, expr = true })
-EOF
-
-" Copilot Chat
-nmap <silent> <leader>ai :CopilotChat<CR>| " open Copilot Chat
-lua << EOF
-require("CopilotChat").setup {
-  model = 'claude-sonnet-4',
-  mappings = {
-    reset = {
-      normal = '<C-q>',
-      insert = '<C-q>',
-    },
-  },
-}
-EOF
 
 " General Key Bindings
 nnoremap <silent> <leader>t :tabnew<CR>|  " new tab

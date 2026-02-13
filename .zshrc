@@ -31,9 +31,8 @@ typeset -aU fpath
 #                                              DDev
 # --------------------------------------------------------------------------------------------------
 
-# source internal ddev utility and extra utilites
+# source internal ddev utility
 source ~/.ddev/source/ddev
-source ~/.ddev/source/fzf-extensions
 
 # run ddev initialization only once, NB this needs to be run prior to anything that requires
 # DDev's color variables, e.g. FZF_DEFAULT_OPTS and ~/.p10k.zsh
@@ -55,7 +54,6 @@ export ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(
   wd
   git
-  git-flow
   docker
   docker-compose
   kubectl

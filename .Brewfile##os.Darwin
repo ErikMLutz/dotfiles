@@ -11,23 +11,15 @@ brew "neovim"
 # cli tools
 brew "jq"
 brew "yq"
-brew "fd"
 brew "fzf"
 brew "bat"
-brew "svn"
-brew "htop"
-brew "tree"
 brew "watch"
 brew "direnv"
 brew "ripgrep"
-brew "git-flow"
-brew "gnu-getopt"
 
 # applications
-cask "iterm2"
-cask "docker-desktop"
-cask "postman"
 cask "karabiner-elements"
+cask "kitty"
 
 # load any machine specific Homebrew formulae
 # see https://github.com/Homebrew/homebrew-bundle/issues/521#issuecomment-509023309

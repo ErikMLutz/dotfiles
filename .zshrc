@@ -11,7 +11,9 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# set neovim as default editor
+# set neovim as default editor, and have it listen on a randomized port
+# so that color scheme sync commands can be issued to it
+alias nvim='nvim --listen /tmp/$RANDOM.nvim.pipe'
 export EDITOR=nvim
 
 # add DDev commands to path
@@ -159,9 +161,6 @@ eval "$(direnv hook zsh)"
 # quick access to journal in Vim
 alias j="nvim +'let g:journal_from_zsh=1' +'call ToggleJournal()'"
 
-# open cheatsheet
-alias cheat="bat ~/.cheatsheet.md"
-
 # apply p10k theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -173,6 +172,14 @@ autoload -U +X bashcompinit && bashcompinit
 # git aliases for cleaning up untracked local branched
 alias git-list-untracked='git fetch --prune && git branch -r | awk "{print \$1}" | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk "{print \$1}"'
 alias git-remove-untracked='git fetch --prune && git branch -r | awk "{print \$1}" | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk "{print \$1}" | xargs git branch -D'
+
+# setup pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+
+# use 1password for SSH keys
+export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock
 
 # --------------------------------------------------------------------------------------------------
 #                                            easter eggs

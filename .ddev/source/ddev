@@ -172,7 +172,9 @@ ddev () {
       fi
 
       source ~/.p10k.zsh
-      /usr/bin/python3 ~/.ddev/misc/sync_neovim_theme.py
+
+      PYTHON="$(PYENV_VERSION=$(pyenv global) pyenv which python)"
+      "${PYTHON}" ~/.ddev/misc/sync_neovim_theme.py
 
       ddev_theme_save
     }

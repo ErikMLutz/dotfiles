@@ -1,8 +1,10 @@
 import os
-import neovim
+from pathlib import Path
 
-if os.path.exists("/tmp/nvim"):
-    nvim = neovim.attach("socket", path=f"/tmp/nvim")
+import pynvim
+
+for socket in Path("/tmp").glob("*.nvim.pipe"):
+    nvim = pynvim.attach("socket", path=socket)
 
     # Set theme environment variables
     for i in range(1, 23):

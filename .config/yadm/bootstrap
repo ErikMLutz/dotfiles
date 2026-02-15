@@ -1,4 +1,5 @@
 #!/bin/sh
+set -euo pipefail
 
 system_type=$(uname -s)
 
@@ -17,10 +18,12 @@ if [ "$system_type" = "Darwin" ]; then
     brew bundle --global
   fi
 
-  if command -v /usr/bin/python3 >/dev/null 2>&1; then
-    echo "Installing required Python modules"
-    /usr/bin/python3 -m pip install --upgrade pip pynvim
-  fi
+  # set up mac defaults, must log out/log in to take effect
+  echo "Configuring Mac settings"
+  defaults write -g InitialKeyRepeat -int 10 # normal minimum is 15 (225 ms)
+  defaults write -g KeyRepeat -int 2 # normal minimum is 2 (30 ms)
+  defaults write -g AppleInterfaceStyle -string Dark
+
 fi
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
@@ -68,3 +71,18 @@ if command -v nvim >/dev/null 2>&1; then
   echo "Bootstraping nvim"
   nvim '+PlugUpdate' '+PlugClean!' '+PlugUpdate' '+qall'
 fi
+
+if [ -z "$(pyenv versions --bare)" ]; then
+  echo "Installing global Python version"
+  pyenv install "$(pyenv latest --known 3)"
+fi
+
+if [ "$(pyenv global)" = "system" ]; then
+  echo "Setting global python version to $(pyenv versions --bare | tail -1)"
+  pyenv global "$(pyenv versions --bare | tail -1)"
+fi
+
+echo "Installing global Python requirements"
+PYTHON="$(PYENV_VERSION=$(pyenv global) pyenv which python)"
+"${PYTHON}" -m pip install --upgrade pip
+"${PYTHON}" -m pip install --upgrade --requirement ~/requirements.txt

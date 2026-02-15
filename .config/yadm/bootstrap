@@ -26,6 +26,9 @@ if [ "$system_type" = "Darwin" ]; then
 
 fi
 
+echo "Configuring yadm to use personal_github host"
+yadm remote set-url origin personal_github:ErikMLutz/dotfiles
+
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   ~/.tmux/plugins/tpm/scripts/install_plugins.sh

@@ -17,6 +17,7 @@ brew "watch"
 brew "direnv"
 brew "ripgrep"
 brew "pyenv"
+brew "just"
 
 # applications
 cask "karabiner-elements"

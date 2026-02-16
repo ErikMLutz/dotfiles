@@ -19,6 +19,9 @@ export EDITOR=nvim
 # add DDev commands to path
 export PATH=~/.ddev/bin:~/.dotfiles/bin:$PATH
 
+# add local bin to path
+export PATH="$HOME/.local/bin:$PATH"
+
 # use bat for syntax highlighted man pages
 export MANPAGER="sh -c 'col -bx | bat --language=man'"
 
@@ -177,6 +180,11 @@ alias git-remove-untracked='git fetch --prune && git branch -r | awk "{print \$1
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init - zsh)"
+
+# setup nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # use 1password for SSH keys
 export SSH_AUTH_SOCK=~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock

@@ -12,6 +12,9 @@ xcode-select --install
 # install yadm
 brew install yadm
 
+# (optional) if this is a personal laptop
+yadm config local.class Personal
+
 # clone this repository, accept prompt to run bootstrap script
 yadm clone git@github.com:ErikMLutz/dotfiles.git
 

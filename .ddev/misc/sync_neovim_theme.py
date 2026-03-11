@@ -1,10 +1,26 @@
 import os
+import socket as _socket
 from pathlib import Path
 
 import pynvim
 
-for socket in Path("/tmp").glob("*.nvim.pipe"):
-    nvim = pynvim.attach("socket", path=socket)
+def is_socket_alive(path, timeout=1.0):
+    """Return True if the unix socket at path has a server listening."""
+    s = _socket.socket(_socket.AF_UNIX, _socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    try:
+        s.connect(str(path))
+        s.close()
+        return True
+    except (OSError, _socket.timeout):
+        return False
+
+for socket_path in Path("/tmp").glob("*.nvim.pipe"):
+    if not is_socket_alive(socket_path):
+        socket_path.unlink(missing_ok=True)
+        continue
+
+    nvim = pynvim.attach("socket", path=socket_path)
 
     # Set theme environment variables
     for i in range(1, 23):
